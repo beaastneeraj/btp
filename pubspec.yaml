@@ -110,7 +110,6 @@ dependencies:
   
   # 🎯 Performance & Analytics
   sentry_flutter: ^8.9.0
-  firebase_performance: ^0.10.0+8
   hydrated_bloc: ^9.1.5
   cached_network_image: ^3.4.1
   flutter_cache_manager: ^3.4.1
