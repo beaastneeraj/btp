@@ -1,0 +1,5 @@
+- [x] Project folder renamed to 'btp' and Flutter project scaffolded.
+- [ ] Next: Organize folders for UI, business logic, data, and APIs.
+- [ ] Integrate Firebase and SQLite.
+- [ ] Scaffold initial screens and models.
+- [ ] Add README.md and update documentation.

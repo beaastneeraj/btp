@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "532726483189",
+    "project_id": "btp-farm-1",
+    "storage_bucket": "btp-farm-1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:532726483189:android:39af6f16f16df38b4b1dbc",
+        "android_client_info": {
+          "package_name": "com.example.btp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC84dNaZpcYC9KEX7_FnZUpPhArFMiF4iI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
