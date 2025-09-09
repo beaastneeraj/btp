@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'weather_screen.dart';
 import 'crop_advice_screen.dart';
 import 'market_prices_screen.dart';
-import 'analytics_screen.dart';
+import 'khatabook_screen.dart';
 import 'cattle_screen.dart';
 import 'irrigation_screen.dart';
 import 'profile_screen.dart';
@@ -54,60 +54,86 @@ class _SimpleDashboardState extends State<SimpleDashboard>
       {
         'title': 'Weather Forecast',
         'subtitle': 'Real-time weather data',
-        'englishTitle': 'Weather Info',
+        'title': 'Weather Forecast',
+        'subtitle': 'Real-time weather data',
         'icon': Icons.wb_sunny,
-        'color': const Color(0xFFFF6B35),
-        'gradient': const [Color(0xFFFF6B35), Color(0xFFFF8E3C)],
+        'color': const Color(0xFF4285F4),
+        'gradient': const [Color(0xFF4285F4), Color(0xFF34A853)],
         'onTap': () => Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const WeatherScreen()),
         ),
       },
       {
-        'hindiTitle': 'फसल सलाह',
-        'englishTitle': 'Crop Advice',
-        'icon': Icons.grass,
-        'color': const Color(0xFF4CAF50),
-        'gradient': const [Color(0xFF4CAF50), Color(0xFF66BB6A)],
+        'title': 'Crop Management',
+        'subtitle': 'Expert farming advice',
+        'icon': Icons.agriculture,
+        'color': const Color(0xFF34A853),
+        'gradient': const [Color(0xFF34A853), Color(0xFF0F9D58)],
         'onTap': () => Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const CropAdviceScreen()),
         ),
       },
       {
-        'hindiTitle': 'बाजार भाव',
-        'englishTitle': 'Market Prices',
+        'title': 'Market Prices',
+        'subtitle': 'Live commodity rates',
         'icon': Icons.trending_up,
-        'color': const Color(0xFF2196F3),
-        'gradient': const [Color(0xFF2196F3), Color(0xFF42A5F5)],
+        'color': const Color(0xFFEA4335),
+        'gradient': const [Color(0xFFEA4335), Color(0xFFFBBC05)],
         'onTap': () => Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const MarketPricesScreen()),
         ),
       },
       {
-        'hindiTitle': 'किसान सहायता',
-        'englishTitle': 'Farmer Support',
-        'icon': Icons.support_agent,
-        'color': const Color(0xFF9C27B0),
-        'gradient': const [Color(0xFF9C27B0), Color(0xFFBA68C8)],
-        'onTap': () => _showComingSoon('किसान सहायता'),
+        'title': 'Farm Khatabook',
+        'subtitle': 'Digital ledger & analytics',
+        'icon': Icons.account_balance_wallet,
+        'color': const Color(0xFF4CAF50),
+        'gradient': const [Color(0xFF4CAF50), Color(0xFF8BC34A)],
+        'onTap': () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const KhatabookScreen()),
+        ),
       },
       {
-        'hindiTitle': 'कृषि तकनीक',
-        'englishTitle': 'Farm Tech',
-        'icon': Icons.engineering,
-        'color': const Color(0xFF009688),
-        'gradient': const [Color(0xFF009688), Color(0xFF4DB6AC)],
-        'onTap': () => _showComingSoon('कृषि तकनीक'),
+        'title': 'Livestock Care',
+        'subtitle': 'Animal health tracking',
+        'icon': Icons.pets,
+        'color': const Color(0xFFFF9800),
+        'gradient': const [Color(0xFFFF9800), Color(0xFFFF5722)],
+        'onTap': () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const CattleScreen()),
+        ),
       },
       {
-        'hindiTitle': 'समुदाय',
-        'englishTitle': 'Community',
+        'title': 'Irrigation Control',
+        'subtitle': 'Smart water management',
+        'icon': Icons.water_drop,
+        'color': const Color(0xFF00BCD4),
+        'gradient': const [Color(0xFF00BCD4), Color(0xFF009688)],
+        'onTap': () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const IrrigationScreen()),
+        ),
+      },
+      {
+        'title': 'Community Hub',
+        'subtitle': 'Connect with farmers',
         'icon': Icons.people,
         'color': const Color(0xFF3F51B5),
-        'gradient': const [Color(0xFF3F51B5), Color(0xFF7986CB)],
-        'onTap': () => _showComingSoon('समुदाय'),
+        'gradient': const [Color(0xFF3F51B5), Color(0xFF2196F3)],
+        'onTap': () => _showComingSoon('Community Hub'),
+      },
+      {
+        'title': 'Farm Store',
+        'subtitle': 'Buy seeds & equipment',
+        'icon': Icons.store,
+        'color': const Color(0xFF795548),
+        'gradient': const [Color(0xFF795548), Color(0xFF8BC34A)],
+        'onTap': () => _showComingSoon('Farm Store'),
       },
     ];
     
@@ -120,11 +146,11 @@ class _SimpleDashboardState extends State<SimpleDashboard>
             backgroundColor: colorScheme.primary,
             foregroundColor: colorScheme.onPrimary,
             title: Text(
-              'भारतीय कृषि',
+              'AgriTech Pro',
               style: GoogleFonts.roboto(
                 fontSize: 28,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 0,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.5,
               ),
             ),
             expandedHeight: 220,
@@ -159,7 +185,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
                               ),
                               SizedBox(height: 8),
                               Text(
-                                'किसानों के लिए डिजिटल समाधान',
+                                'Smart Farming Solutions',
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.white70,
@@ -201,7 +227,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
         foregroundColor: colorScheme.onPrimary,
         icon: const Icon(Icons.help),
         label: Text(
-          'सहायता',
+          'Help',
           style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
         ),
       ),
@@ -245,7 +271,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'स्वागत है',
+                                'Welcome Back',
                                 style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
@@ -253,7 +279,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
                                 ),
                               ),
                               Text(
-                                'आधुनिक कृषि समाधान के लिए',
+                                'Modern Agriculture Solutions',
                                 style: GoogleFonts.roboto(
                                   fontSize: 14,
                                   color: colorScheme.onPrimaryContainer.withOpacity(0.8),
@@ -281,7 +307,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'आप गेस्ट मोड में हैं। सभी सुविधाओं का आनंद लें!',
+                              'You\'re in guest mode. Enjoy all features!',
                               style: GoogleFonts.roboto(
                                 fontSize: 14,
                                 color: colorScheme.onPrimaryContainer,
@@ -307,7 +333,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'सुविधाएं',
+          'Features',
           style: GoogleFonts.roboto(
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -385,7 +411,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
               ),
               const SizedBox(height: 16),
               Text(
-                feature['hindiTitle'] as String,
+                feature['title'] as String,
                 style: GoogleFonts.roboto(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -395,7 +421,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
               ),
               const SizedBox(height: 4),
               Text(
-                feature['englishTitle'] as String,
+                feature['subtitle'] as String,
                 style: GoogleFonts.roboto(
                   fontSize: 12,
                   color: colorScheme.onSurface.withOpacity(0.7),
@@ -425,20 +451,20 @@ class _SimpleDashboardState extends State<SimpleDashboard>
               ),
               const SizedBox(width: 12),
               Text(
-                'जल्द आ रहा है',
+                'Coming Soon',
                 style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
               ),
             ],
           ),
           content: Text(
-            '$featureName सुविधा पर काम चल रहा है। जल्द ही उपलब्ध होगी!',
+            '$featureName feature is under development. Coming soon!',
             style: GoogleFonts.roboto(),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'समझ गया',
+                'Got it',
                 style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
               ),
             ),
@@ -463,7 +489,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
               ),
               const SizedBox(width: 12),
               Text(
-                'सहायता',
+                'Help',
                 style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
               ),
             ],
@@ -473,16 +499,19 @@ class _SimpleDashboardState extends State<SimpleDashboard>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'उपलब्ध सुविधाएं:',
+                'Available Features:',
                 style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
-              _buildHelpItem('🌤️ मौसम जानकारी - वर्तमान मौसम और पूर्वानुमान'),
-              _buildHelpItem('🌾 फसल सलाह - विस्तृत कृषि गाइड'),
-              _buildHelpItem('📈 बाजार भाव - लाइव कीमतें और ट्रेंड'),
+              _buildHelpItem('🌤️ Weather Forecast - Live weather & predictions'),
+              _buildHelpItem('🌾 Crop Management - Comprehensive farming guide'),
+              _buildHelpItem('📈 Market Prices - Live prices & trends'),
+              _buildHelpItem('📊 Farm Analytics - Performance insights'),
+              _buildHelpItem('🐄 Livestock Care - Animal health tracking'),
+              _buildHelpItem('💧 Irrigation Control - Smart water management'),
               const SizedBox(height: 12),
               Text(
-                'अधिक सुविधाएं जल्द ही जोड़ी जाएंगी!',
+                'More features coming soon!',
                 style: GoogleFonts.roboto(
                   fontSize: 12,
                   color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
@@ -494,7 +523,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'बंद करें',
+                'Close',
                 style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
               ),
             ),

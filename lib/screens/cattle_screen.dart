@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/app_provider.dart';
-import '../models/cattle.dart';
-import '../themes/app_theme.dart';
-import '../widgets/custom_app_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CattleScreen extends StatefulWidget {
   const CattleScreen({super.key});
@@ -13,392 +9,678 @@ class CattleScreen extends StatefulWidget {
 }
 
 class _CattleScreenState extends State<CattleScreen> with TickerProviderStateMixin {
+  late AnimationController _animationController;
   late TabController _tabController;
-  String _searchQuery = '';
-  CattleType? _selectedType;
-  HealthStatus? _selectedHealth;
+  String searchQuery = '';
+  String selectedCategory = 'All Animals';
+  String selectedHealthStatus = 'All Status';
+
+  final List<String> categories = ['All Animals', 'Dairy Cows', 'Bulls', 'Calves', 'Goats', 'Sheep', 'Poultry'];
+  final List<String> healthStatuses = ['All Status', 'Healthy', 'Under Treatment', 'Vaccination Due', 'Breeding'];
+
+  final List<Map<String, dynamic>> livestockData = [
+    {
+      'id': 'C001',
+      'name': 'Bella',
+      'type': 'Dairy Cow',
+      'breed': 'Holstein',
+      'age': '4 years',
+      'weight': '650 kg',
+      'health': 'Healthy',
+      'lastCheckup': '2024-09-01',
+      'milkProduction': '28 L/day',
+      'nextVaccination': '2024-11-15',
+      'icon': '🐄',
+      'color': const Color(0xFF4CAF50),
+    },
+    {
+      'id': 'C002',
+      'name': 'Thunder',
+      'type': 'Bull',
+      'breed': 'Angus',
+      'age': '5 years',
+      'weight': '900 kg',
+      'health': 'Healthy',
+      'lastCheckup': '2024-08-28',
+      'milkProduction': 'N/A',
+      'nextVaccination': '2024-12-01',
+      'icon': '🐂',
+      'color': const Color(0xFF2196F3),
+    },
+    {
+      'id': 'C003',
+      'name': 'Lily',
+      'type': 'Calf',
+      'breed': 'Jersey',
+      'age': '8 months',
+      'weight': '180 kg',
+      'health': 'Under Treatment',
+      'lastCheckup': '2024-09-15',
+      'milkProduction': 'N/A',
+      'nextVaccination': '2024-10-20',
+      'icon': '🐮',
+      'color': const Color(0xFFFF9800),
+    },
+    {
+      'id': 'G001',
+      'name': 'Daisy',
+      'type': 'Goat',
+      'breed': 'Boer',
+      'age': '2 years',
+      'weight': '45 kg',
+      'health': 'Healthy',
+      'lastCheckup': '2024-09-10',
+      'milkProduction': '3 L/day',
+      'nextVaccination': '2024-11-30',
+      'icon': '🐐',
+      'color': const Color(0xFF9C27B0),
+    },
+    {
+      'id': 'S001',
+      'name': 'Woolly',
+      'type': 'Sheep',
+      'breed': 'Merino',
+      'age': '3 years',
+      'weight': '70 kg',
+      'health': 'Vaccination Due',
+      'lastCheckup': '2024-08-20',
+      'milkProduction': 'N/A',
+      'nextVaccination': '2024-10-15',
+      'icon': '🐑',
+      'color': const Color(0xFFE91E63),
+    },
+  ];
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
     _tabController = TabController(length: 4, vsync: this);
+    _animationController.forward();
   }
 
   @override
   void dispose() {
+    _animationController.dispose();
     _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-        ),
-        child: Column(
-          children: [
-            CustomAppBar(
-              title: 'Cattle Management',
-              subtitle: 'Monitor your livestock health and productivity',
-              actions: [
-                IconButton(
-                  onPressed: _showFilterDialog,
-                  icon: const Icon(Icons.filter_list, color: Colors.white),
+      backgroundColor: colorScheme.surface,
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverAppBar.large(
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+              title: Text(
+                'Livestock Management',
+                style: GoogleFonts.roboto(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w500,
                 ),
-                IconButton(
-                  onPressed: _showSearchDialog,
-                  icon: const Icon(Icons.search, color: Colors.white),
-                ),
-              ],
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(16),
               ),
-              child: TabBar(
-                controller: _tabController,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.white.withOpacity(0.7),
-                indicator: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
+              pinned: true,
+              expandedHeight: 200,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        colorScheme.primary,
+                        colorScheme.primary.withOpacity(0.8),
+                      ],
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 120, left: 24, right: 24),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Health & Care Management',
+                          style: GoogleFonts.roboto(
+                            fontSize: 18,
+                            color: colorScheme.onPrimary.withOpacity(0.9),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '${_getFilteredLivestock().length} Animals',
+                          style: GoogleFonts.roboto(
+                            fontSize: 16,
+                            color: colorScheme.onPrimary.withOpacity(0.8),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                indicatorPadding: const EdgeInsets.all(4),
+              ),
+              bottom: TabBar(
+                controller: _tabController,
+                indicatorColor: colorScheme.onPrimary,
+                labelColor: colorScheme.onPrimary,
+                unselectedLabelColor: colorScheme.onPrimary.withOpacity(0.7),
+                labelStyle: GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.w500),
                 tabs: const [
-                  Tab(text: 'All Cattle'),
+                  Tab(text: 'Animals'),
                   Tab(text: 'Health'),
-                  Tab(text: 'Breeding'),
-                  Tab(text: 'Production'),
+                  Tab(text: 'Records'),
+                  Tab(text: 'Care'),
                 ],
               ),
             ),
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(top: 16),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                ),
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildAllCattleTab(),
-                    _buildHealthTab(),
-                    _buildBreedingTab(),
-                    _buildProductionTab(),
-                  ],
-                ),
-              ),
-            ),
+          ];
+        },
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildAnimalsTab(),
+            _buildHealthTab(),
+            _buildRecordsTab(),
+            _buildCareTab(),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _showAddAnimalDialog,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        icon: const Icon(Icons.add),
+        label: Text(
+          'Add Animal',
+          style: GoogleFonts.roboto(),
+        ),
+  Widget _buildAnimalsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSearchAndFilters(),
+          const SizedBox(height: 24),
+          _buildOverviewCards(),
+          const SizedBox(height: 24),
+          _buildAnimalsList(),
+        ],
+      ),
     );
   }
 
-  Widget _buildAllCattleTab() {
-    return Consumer<AppProvider>(
-      builder: (context, provider, child) {
-        // For now, using mock data
-        final cattleList = _getMockCattleData();
-        final filteredCattle = _filterCattle(cattleList);
-
-        return Column(
+  Widget _buildSearchAndFilters() {
+    return Card(
+      elevation: 0,
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildCattleStats(cattleList),
-            Expanded(
-              child: filteredCattle.isEmpty
-                  ? _buildEmptyState()
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: filteredCattle.length,
-                      itemBuilder: (context, index) {
-                        final cattle = filteredCattle[index];
-                        return _buildCattleCard(cattle);
-                      },
-                    ),
+            Text(
+              'Search & Filter',
+              style: GoogleFonts.roboto(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildCattleStats(List<Cattle> cattleList) {
-    final totalCattle = cattleList.length;
-    final healthyCattle = cattleList.where((c) => c.healthStatus == HealthStatus.healthy).length;
-    final lactatingCows = cattleList.where((c) => c.isLactating).length;
-    final needsVaccination = cattleList.where((c) => c.needsVaccination).length;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildStatCard(
-              'Total Cattle',
-              totalCattle.toString(),
-              Icons.pets,
-              AppTheme.primaryGreen,
+            const SizedBox(height: 16),
+            TextField(
+              onChanged: (value) => setState(() => searchQuery = value),
+              decoration: InputDecoration(
+                hintText: 'Search animals by name or ID...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildStatCard(
-              'Healthy',
-              healthyCattle.toString(),
-              Icons.favorite,
-              AppTheme.successGreen,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildStatCard(
-              'Lactating',
-              lactatingCows.toString(),
-              Icons.local_drink,
-              AppTheme.primaryBlue,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildStatCard(
-              'Needs Care',
-              needsVaccination.toString(),
-              Icons.medical_services,
-              AppTheme.warningOrange,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2)),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.grey.shade600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCattleCard(Cattle cattle) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppTheme.cardShadow,
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Row(
+            const SizedBox(height: 16),
+            Row(
               children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        _getHealthColor(cattle.healthStatus),
-                        _getHealthColor(cattle.healthStatus).withOpacity(0.7),
-                      ],
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: selectedCategory,
+                    decoration: InputDecoration(
+                      labelText: 'Category',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Icon(
-                    _getCattleIcon(cattle.type),
-                    color: Colors.white,
-                    size: 32,
+                    items: categories.map((String category) {
+                      return DropdownMenuItem<String>(
+                        value: category,
+                        child: Text(category, style: GoogleFonts.roboto()),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedCategory = newValue!;
+                      });
+                    },
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            cattle.name,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _getHealthColor(cattle.healthStatus),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              cattle.healthStatus.displayName,
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
+                  child: DropdownButtonFormField<String>(
+                    value: selectedHealthStatus,
+                    decoration: InputDecoration(
+                      labelText: 'Health Status',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Tag: ${cattle.tagNumber} • ${cattle.breed.displayName}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                      Text(
-                        'Age: ${cattle.displayAge} • Weight: ${cattle.weight}kg',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  children: [
-                    if (cattle.needsVaccination)
-                      Icon(
-                        Icons.warning,
-                        color: AppTheme.warningOrange,
-                        size: 20,
-                      ),
-                    const SizedBox(height: 8),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Colors.grey.shade400,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
-                  ],
+                    items: healthStatuses.map((String status) {
+                      return DropdownMenuItem<String>(
+                        value: status,
+                        child: Text(status, style: GoogleFonts.roboto()),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedHealthStatus = newValue!;
+                      });
+                    },
+                  ),
                 ),
               ],
             ),
-          ),
-          if (cattle.isLactating && cattle.dailyMilkYield != null)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
-                borderRadius: const BorderRadius.vertical(
-                  bottom: Radius.circular(16),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.local_drink,
-                    color: AppTheme.primaryBlue,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Daily Yield: ${cattle.dailyMilkYield!.toStringAsFixed(1)}L',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.primaryBlue,
-                    ),
-                  ),
-                  const Spacer(),
-                  if (cattle.lastMilking != null)
-                    Text(
-                      'Last: ${_formatTime(cattle.lastMilking!)}',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOverviewCards() {
+    final healthyCount = livestockData.where((animal) => animal['health'] == 'Healthy').length;
+    final treatmentCount = livestockData.where((animal) => animal['health'] == 'Under Treatment').length;
+    final vaccinationDueCount = livestockData.where((animal) => animal['health'] == 'Vaccination Due').length;
+    final totalAnimals = livestockData.length;
+
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 12,
+      childAspectRatio: 1.5,
+      children: [
+        _buildOverviewCard('Total Animals', '$totalAnimals', Icons.pets, Colors.blue),
+        _buildOverviewCard('Healthy', '$healthyCount', Icons.favorite, Colors.green),
+        _buildOverviewCard('Treatment', '$treatmentCount', Icons.medical_services, Colors.orange),
+        _buildOverviewCard('Vaccination Due', '$vaccinationDueCount', Icons.schedule, Colors.red),
+      ],
+    );
+  }
+
+  Widget _buildOverviewCard(String title, String count, IconData icon, Color color) {
+    return Card(
+      elevation: 0,
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 32, color: color),
+            const SizedBox(height: 8),
+            Text(
+              count,
+              style: GoogleFonts.roboto(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: color,
               ),
             ),
-        ],
+            Text(
+              title,
+              style: GoogleFonts.roboto(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildAnimalsList() {
+    final filteredAnimals = _getFilteredLivestock();
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Animal List',
+          style: GoogleFonts.roboto(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 16),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: filteredAnimals.length,
+          itemBuilder: (context, index) {
+            final animal = filteredAnimals[index];
+            return Card(
+              elevation: 0,
+              color: Theme.of(context).colorScheme.surfaceContainerHigh,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              margin: const EdgeInsets.only(bottom: 12),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(16),
+                leading: CircleAvatar(
+                  backgroundColor: (animal['color'] as Color).withOpacity(0.1),
+                  radius: 30,
+                  child: Text(
+                    animal['icon'],
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                ),
+                title: Text(
+                  '${animal['name']} (${animal['id']})',
+                  style: GoogleFonts.roboto(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 4),
+                    Text(
+                      '${animal['type']} • ${animal['breed']} • ${animal['age']}',
+                      style: GoogleFonts.roboto(fontSize: 14),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: _getHealthStatusColor(animal['health']).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            animal['health'],
+                            style: GoogleFonts.roboto(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: _getHealthStatusColor(animal['health']),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          animal['weight'],
+                          style: GoogleFonts.roboto(
+                            fontSize: 12,
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                trailing: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                ),
+                onTap: () => _showAnimalDetails(animal),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 
   Widget _buildHealthTab() {
-    return const Center(
-      child: Text('Health monitoring features coming soon...'),
-    );
-  }
-
-  Widget _buildBreedingTab() {
-    return const Center(
-      child: Text('Breeding management features coming soon...'),
-    );
-  }
-
-  Widget _buildProductionTab() {
-    return const Center(
-      child: Text('Production analytics coming soon...'),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.pets_outlined,
-            size: 80,
-            color: Colors.grey.shade400,
-          ),
-          const SizedBox(height: 16),
           Text(
-            'No cattle found',
-            style: TextStyle(
-              fontSize: 18,
+            'Health Management',
+            style: GoogleFonts.roboto(
+              fontSize: 24,
               fontWeight: FontWeight.w600,
-              color: Colors.grey.shade600,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 20),
+          _buildHealthAlerts(),
+          const SizedBox(height: 24),
+          _buildVaccinationSchedule(),
+          const SizedBox(height: 24),
+          _buildHealthReports(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHealthAlerts() {
+    final treatmentAnimals = livestockData.where((animal) => 
+      animal['health'] == 'Under Treatment' || animal['health'] == 'Vaccination Due').toList();
+
+    return Card(
+      elevation: 0,
+      color: Theme.of(context).colorScheme.errorContainer,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.warning,
+                  color: Theme.of(context).colorScheme.error,
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Health Alerts',
+                  style: GoogleFonts.roboto(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onErrorContainer,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (treatmentAnimals.isEmpty)
+              Text(
+                'No health alerts at this time.',
+                style: GoogleFonts.roboto(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onErrorContainer.withOpacity(0.8),
+                ),
+              )
+            else
+              ...treatmentAnimals.map((animal) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.circle,
+                      size: 8,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${animal['name']} (${animal['id']}) - ${animal['health']}',
+                        style: GoogleFonts.roboto(
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.onErrorContainer,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVaccinationSchedule() {
+    final upcomingVaccinations = livestockData.where((animal) => 
+      DateTime.parse(animal['nextVaccination']).isAfter(DateTime.now())).toList();
+
+    return Card(
+      elevation: 0,
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Upcoming Vaccinations',
+              style: GoogleFonts.roboto(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...upcomingVaccinations.map((animal) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                children: [
+                  Text(animal['icon'], style: const TextStyle(fontSize: 20)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${animal['name']} (${animal['id']})',
+                          style: GoogleFonts.roboto(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          'Due: ${animal['nextVaccination']}',
+                          style: GoogleFonts.roboto(
+                            fontSize: 12,
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.schedule, size: 20),
+                  ),
+                ],
+              ),
+            )).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHealthReports() {
+    return Card(
+      elevation: 0,
+      color: Theme.of(context).colorScheme.primaryContainer,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Health Reports',
+              style: GoogleFonts.roboto(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Generate comprehensive health reports for veterinary consultation and record keeping.',
+              style: GoogleFonts.roboto(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.8),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.health_and_safety),
+                label: Text(
+                  'Generate Health Report',
+                  style: GoogleFonts.roboto(),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecordsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
-            'Add your first cattle to get started',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade500,
+            'Animal Records',
+            style: GoogleFonts.roboto(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Detailed animal records and history will be displayed here.',
+            style: GoogleFonts.roboto(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
             ),
           ),
         ],
@@ -406,50 +688,193 @@ class _CattleScreenState extends State<CattleScreen> with TickerProviderStateMix
     );
   }
 
-  List<Cattle> _filterCattle(List<Cattle> cattleList) {
-    return cattleList.where((cattle) {
-      bool matchesSearch = _searchQuery.isEmpty ||
-          cattle.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          cattle.tagNumber.toLowerCase().contains(_searchQuery.toLowerCase());
+  Widget _buildCareTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Animal Care',
+            style: GoogleFonts.roboto(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Care guidelines and feeding schedules will be displayed here.',
+            style: GoogleFonts.roboto(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Map<String, dynamic>> _getFilteredLivestock() {
+    return livestockData.where((animal) {
+      final matchesSearch = searchQuery.isEmpty ||
+          animal['name'].toLowerCase().contains(searchQuery.toLowerCase()) ||
+          animal['id'].toLowerCase().contains(searchQuery.toLowerCase());
       
-      bool matchesType = _selectedType == null || cattle.type == _selectedType;
-      bool matchesHealth = _selectedHealth == null || cattle.healthStatus == _selectedHealth;
+      final matchesCategory = selectedCategory == 'All Animals' ||
+          animal['type'] == selectedCategory.replaceAll('s', '').trim();
       
-      return matchesSearch && matchesType && matchesHealth;
+      final matchesHealth = selectedHealthStatus == 'All Status' ||
+          animal['health'] == selectedHealthStatus;
+      
+      return matchesSearch && matchesCategory && matchesHealth;
     }).toList();
   }
 
-  void _showSearchDialog() {
+  Color _getHealthStatusColor(String status) {
+    switch (status) {
+      case 'Healthy':
+        return Colors.green;
+      case 'Under Treatment':
+        return Colors.orange;
+      case 'Vaccination Due':
+        return Colors.red;
+      case 'Breeding':
+        return Colors.purple;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  void _showAnimalDetails(Map<String, dynamic> animal) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    animal['icon'],
+                    style: const TextStyle(fontSize: 32),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${animal['name']} (${animal['id']})',
+                          style: GoogleFonts.roboto(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          '${animal['type']} • ${animal['breed']}',
+                          style: GoogleFonts.roboto(
+                            fontSize: 16,
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              _buildAnimalDetailCard('Basic Information', [
+                'Age: ${animal['age']}',
+                'Weight: ${animal['weight']}',
+                'Breed: ${animal['breed']}',
+                'Health Status: ${animal['health']}',
+              ]),
+              const SizedBox(height: 16),
+              _buildAnimalDetailCard('Medical History', [
+                'Last Checkup: ${animal['lastCheckup']}',
+                'Next Vaccination: ${animal['nextVaccination']}',
+                if (animal['milkProduction'] != 'N/A') 'Milk Production: ${animal['milkProduction']}',
+              ]),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAnimalDetailCard(String title, List<String> details) {
+    return Card(
+      elevation: 0,
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.roboto(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...details.map((detail) => Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                detail,
+                style: GoogleFonts.roboto(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                ),
+              ),
+            )).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAddAnimalDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Search Cattle'),
-        content: TextField(
-          onChanged: (value) {
-            setState(() {
-              _searchQuery = value;
-            });
-          },
-          decoration: const InputDecoration(
-            hintText: 'Enter name or tag number',
-            prefixIcon: Icon(Icons.search),
-          ),
+        title: Text(
+          'Add New Animal',
+          style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
+        ),
+        content: Text(
+          'Animal registration form will be displayed here.',
+          style: GoogleFonts.roboto(),
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              setState(() {
-                _searchQuery = '';
-              });
-              Navigator.pop(context);
-            },
-            child: const Text('Clear'),
-          ),
-          TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Done'),
+            child: Text('Cancel', style: GoogleFonts.roboto()),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Add Animal', style: GoogleFonts.roboto()),
           ),
         ],
+      ),
+    );
+  }
+}
       ),
     );
   }
