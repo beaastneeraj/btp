@@ -1,165 +1,454 @@
-iimport 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
-import '../widgets/analytics_dashboard.dart';
+import '../widgets/analytics_card.dart';
 import '../widgets/weather_widget.dart';
-import '../widgets/inventory_alert_widget.dart';
-import '../widgets/task_reminder_widget.dart';
+import '../widgets/recent_alerts_widget.dart';
 import 'fields_screen.dart';
 import 'crops_screen.dart';
 import 'expenses_screen.dart';
 import 'inventory_screen.dart';
-import 'tasks_screen.dart';
-import 'weather_screen.dart';
-import 'reports_screen.dart';
-import 'profile_screen.dart';ackage:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'fields_screen.dart';
-import 'crops_screen.dart';
-import 'expenses_screen.dart';
-import 'inventory_screen.dart';
-import 'tasks_screen.dart';
+import 'task_management_screen.dart';
 import 'weather_screen.dart';
 import 'reports_screen.dart';
 import 'profile_screen.dart';
-import '../widgets/analytics_dashboard.dart';
-import '../widgets/weather_widget.dart';
-import '../widgets/inventory_alert_widget.dart';
-import '../widgets/task_reminder_widget.dart';
-import '../providers/app_provider.dart';
 
 class DashboardScreen extends StatelessWidget {
+  const DashboardScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Farm Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.green.shade700,
-        elevation: 0,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen()));
-            },
-          ),
-        ],
-      ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.green.shade400, Colors.blue.shade200],
+            colors: [
+              Color(0xFF1A5B3A),
+              Color(0xFF2D8B5A),
+              Color(0xFF4CAF50),
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
-        child: ListView(
-          children: [
-            SizedBox(height: 16),
-            AnalyticsDashboard(),
-            WeatherWidget(
-              location: 'Jaipur',
-              condition: 'Sunny',
-              temperature: 32.5,
-              iconUrl: 'https://openweathermap.org/img/wn/01d.png',
-            ),
-            InventoryAlertWidget(itemName: 'Urea', stock: 10, reorderLevel: 20),
-            TaskReminderWidget(title: 'Irrigation', dueDate: '2025-09-10'),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-                children: [
-                  _DashboardCard(
-                    icon: Icons.grass,
-                    label: 'Fields & Crops',
-                    color: Colors.green.shade600,
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => FieldsScreen()));
-                    },
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildWelcomeSection(context),
+                      const SizedBox(height: 24),
+                      _buildAnalyticsSection(),
+                      const SizedBox(height: 24),
+                      _buildWeatherSection(),
+                      const SizedBox(height: 24),
+                      _buildAlertsSection(),
+                      const SizedBox(height: 24),
+                      _buildQuickActionsSection(context),
+                      const SizedBox(height: 24),
+                      _buildNavigationGrid(context),
+                    ],
                   ),
-                  _DashboardCard(
-                    icon: Icons.attach_money,
-                    label: 'Expenses',
-                    color: Colors.orange.shade600,
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => ExpensesScreen()));
-                    },
-                  ),
-                  _DashboardCard(
-                    icon: Icons.inventory_2,
-                    label: 'Inventory',
-                    color: Colors.blue.shade600,
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => InventoryScreen()));
-                    },
-                  ),
-                  _DashboardCard(
-                    icon: Icons.task_alt,
-                    label: 'Tasks',
-                    color: Colors.purple.shade600,
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => TasksScreen()));
-                    },
-                  ),
-                  _DashboardCard(
-                    icon: Icons.cloud,
-                    label: 'Weather',
-                    color: Colors.teal.shade600,
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => WeatherScreen()));
-                    },
-                  ),
-                  _DashboardCard(
-                    icon: Icons.bar_chart_rounded,
-                    label: 'Reports',
-                    color: Colors.red.shade600,
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => ReportsScreen()));
-                    },
-                  ),
-                ],
+                ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.agriculture,
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Text(
+              'Farm Manager',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              );
+            },
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: const Icon(
+                Icons.person,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWelcomeSection(BuildContext context) {
+    return Consumer<AppProvider>(
+      builder: (context, provider, child) {
+        final now = DateTime.now();
+        final hour = now.hour;
+        String greeting;
+        
+        if (hour < 12) {
+          greeting = 'Good Morning';
+        } else if (hour < 17) {
+          greeting = 'Good Afternoon';
+        } else {
+          greeting = 'Good Evening';
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '$greeting, Farmer!',
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Here\'s what\'s happening on your farm today',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white.withOpacity(0.8),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildAnalyticsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Farm Analytics',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white.withOpacity(0.9),
+          ),
+        ),
+        const SizedBox(height: 16),
+        const AnalyticsCard(),
+      ],
+    );
+  }
+
+  Widget _buildWeatherSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Weather Forecast',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white.withOpacity(0.9),
+          ),
+        ),
+        const SizedBox(height: 16),
+        const WeatherWidget(),
+      ],
+    );
+  }
+
+  Widget _buildAlertsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Farm Alerts',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white.withOpacity(0.9),
+          ),
+        ),
+        const SizedBox(height: 16),
+        const RecentAlertsWidget(),
+      ],
+    );
+  }
+
+  Widget _buildQuickActionsSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Quick Actions',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white.withOpacity(0.9),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildQuickActionCard(
+                context,
+                'Add Task',
+                Icons.add_task,
+                Colors.blue,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const TaskManagementScreen()),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildQuickActionCard(
+                context,
+                'Log Expense',
+                Icons.add_chart,
+                Colors.orange,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ExpensesScreen()),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildQuickActionCard(
+                context,
+                'Check Weather',
+                Icons.cloud,
+                Colors.cyan,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const WeatherScreen()),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickActionCard(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
     );
   }
-}
 
-class _DashboardCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _DashboardCard({required this.icon, required this.label, required this.color, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 48, color: color),
-              SizedBox(height: 12),
-              Text(label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-            ],
+  Widget _buildNavigationGrid(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Farm Management',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white.withOpacity(0.9),
           ),
+        ),
+        const SizedBox(height: 16),
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 1.2,
+          children: [
+            _buildNavigationCard(
+              context,
+              'Fields & Crops',
+              Icons.grass,
+              Colors.green,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const FieldsScreen()),
+              ),
+            ),
+            _buildNavigationCard(
+              context,
+              'Task Management',
+              Icons.assignment,
+              Colors.purple,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const TaskManagementScreen()),
+              ),
+            ),
+            _buildNavigationCard(
+              context,
+              'Inventory',
+              Icons.inventory_2,
+              Colors.blue,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const InventoryScreen()),
+              ),
+            ),
+            _buildNavigationCard(
+              context,
+              'Expenses',
+              Icons.account_balance_wallet,
+              Colors.orange,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ExpensesScreen()),
+              ),
+            ),
+            _buildNavigationCard(
+              context,
+              'Weather',
+              Icons.cloud,
+              Colors.cyan,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const WeatherScreen()),
+              ),
+            ),
+            _buildNavigationCard(
+              context,
+              'Reports',
+              Icons.analytics,
+              Colors.red,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ReportsScreen()),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNavigationCard(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
