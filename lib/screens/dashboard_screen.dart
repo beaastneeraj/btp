@@ -18,6 +18,14 @@ class DashboardScreen extends StatelessWidget {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen()));
+            },
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -27,59 +35,77 @@ class DashboardScreen extends StatelessWidget {
             end: Alignment.bottomRight,
           ),
         ),
-        child: GridView.count(
-          crossAxisCount: 2,
-          padding: EdgeInsets.all(20),
-          crossAxisSpacing: 20,
-          mainAxisSpacing: 20,
+        child: ListView(
           children: [
-            _DashboardCard(
-              icon: Icons.grass,
-              label: 'Fields & Crops',
-              color: Colors.green.shade600,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => FieldsScreen()));
-              },
+            SizedBox(height: 16),
+            AnalyticsDashboard(),
+            WeatherWidget(
+              location: 'Jaipur',
+              condition: 'Sunny',
+              temperature: 32.5,
+              iconUrl: 'https://openweathermap.org/img/wn/01d.png',
             ),
-            _DashboardCard(
-              icon: Icons.attach_money,
-              label: 'Expenses',
-              color: Colors.orange.shade600,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => ExpensesScreen()));
-              },
-            ),
-            _DashboardCard(
-              icon: Icons.inventory_2,
-              label: 'Inventory',
-              color: Colors.blue.shade600,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => InventoryScreen()));
-              },
-            ),
-            _DashboardCard(
-              icon: Icons.task_alt,
-              label: 'Tasks',
-              color: Colors.purple.shade600,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => TasksScreen()));
-              },
-            ),
-            _DashboardCard(
-              icon: Icons.cloud,
-              label: 'Weather',
-              color: Colors.teal.shade600,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => WeatherScreen()));
-              },
-            ),
-            _DashboardCard(
-              icon: Icons.bar_chart_rounded,
-              label: 'Reports',
-              color: Colors.red.shade600,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => ReportsScreen()));
-              },
+            InventoryAlertWidget(itemName: 'Urea', stock: 10, reorderLevel: 20),
+            TaskReminderWidget(title: 'Irrigation', dueDate: '2025-09-10'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20,
+                children: [
+                  _DashboardCard(
+                    icon: Icons.grass,
+                    label: 'Fields & Crops',
+                    color: Colors.green.shade600,
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => FieldsScreen()));
+                    },
+                  ),
+                  _DashboardCard(
+                    icon: Icons.attach_money,
+                    label: 'Expenses',
+                    color: Colors.orange.shade600,
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => ExpensesScreen()));
+                    },
+                  ),
+                  _DashboardCard(
+                    icon: Icons.inventory_2,
+                    label: 'Inventory',
+                    color: Colors.blue.shade600,
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => InventoryScreen()));
+                    },
+                  ),
+                  _DashboardCard(
+                    icon: Icons.task_alt,
+                    label: 'Tasks',
+                    color: Colors.purple.shade600,
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => TasksScreen()));
+                    },
+                  ),
+                  _DashboardCard(
+                    icon: Icons.cloud,
+                    label: 'Weather',
+                    color: Colors.teal.shade600,
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => WeatherScreen()));
+                    },
+                  ),
+                  _DashboardCard(
+                    icon: Icons.bar_chart_rounded,
+                    label: 'Reports',
+                    color: Colors.red.shade600,
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => ReportsScreen()));
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
