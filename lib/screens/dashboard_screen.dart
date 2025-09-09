@@ -12,64 +12,77 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Farm Dashboard'),
-        backgroundColor: Colors.green[700],
+        title: Text('Farm Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.green.shade700,
+        elevation: 0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+        ),
       ),
-      body: GridView.count(
-        crossAxisCount: 2,
-        padding: EdgeInsets.all(16),
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        children: [
-          _DashboardCard(
-            icon: Icons.grass,
-            label: 'Fields & Crops',
-            color: Colors.green,
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => FieldsScreen()));
-            },
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.green.shade400, Colors.blue.shade200],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          _DashboardCard(
-            icon: Icons.attach_money,
-            label: 'Expenses',
-            color: Colors.orange,
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => ExpensesScreen()));
-            },
-          ),
-          _DashboardCard(
-            icon: Icons.inventory,
-            label: 'Inventory',
-            color: Colors.blue,
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => InventoryScreen()));
-            },
-          ),
-          _DashboardCard(
-            icon: Icons.task,
-            label: 'Tasks',
-            color: Colors.purple,
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => TasksScreen()));
-            },
-          ),
-          _DashboardCard(
-            icon: Icons.cloud,
-            label: 'Weather',
-            color: Colors.teal,
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => WeatherScreen()));
-            },
-          ),
-          _DashboardCard(
-            icon: Icons.bar_chart,
-            label: 'Reports',
-            color: Colors.red,
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => ReportsScreen()));
-            },
-          ),
-        ],
+        ),
+        child: GridView.count(
+          crossAxisCount: 2,
+          padding: EdgeInsets.all(20),
+          crossAxisSpacing: 20,
+          mainAxisSpacing: 20,
+          children: [
+            _DashboardCard(
+              icon: Icons.grass,
+              label: 'Fields & Crops',
+              color: Colors.green.shade600,
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => FieldsScreen()));
+              },
+            ),
+            _DashboardCard(
+              icon: Icons.attach_money,
+              label: 'Expenses',
+              color: Colors.orange.shade600,
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => ExpensesScreen()));
+              },
+            ),
+            _DashboardCard(
+              icon: Icons.inventory_2,
+              label: 'Inventory',
+              color: Colors.blue.shade600,
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => InventoryScreen()));
+              },
+            ),
+            _DashboardCard(
+              icon: Icons.task_alt,
+              label: 'Tasks',
+              color: Colors.purple.shade600,
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => TasksScreen()));
+              },
+            ),
+            _DashboardCard(
+              icon: Icons.cloud,
+              label: 'Weather',
+              color: Colors.teal.shade600,
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => WeatherScreen()));
+              },
+            ),
+            _DashboardCard(
+              icon: Icons.bar_chart_rounded,
+              label: 'Reports',
+              color: Colors.red.shade600,
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => ReportsScreen()));
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
