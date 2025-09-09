@@ -4,14 +4,588 @@ import '../providers/app_provider.dart';
 import '../widgets/analytics_card.dart';
 import '../widgets/weather_widget.dart';
 import '../widgets/recent_alerts_widget.dart';
+import '../themes/app_theme.dart';
+import '../widgets/custom_app_bar.dart';
 import 'fields_screen.dart';
 import 'crops_screen.dart';
 import 'expenses_screen.dart';
 import 'inventory_screen.dart';
-import 'task_management_screen.dart';
+import 'tasks_screen.dart';
 import 'weather_screen.dart';
 import 'reports_screen.dart';
 import 'profile_screen.dart';
+
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _loadDashboardData();
+  }
+
+  Future<void> _loadDashboardData() async {
+    final provider = Provider.of<AppProvider>(context, listen: false);
+    // Load dashboard data
+    await provider.loadFields();
+    await provider.loadCrops();
+    await provider.loadTasks();
+    await provider.loadExpenses();
+    await provider.loadInventory();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppTheme.primaryGradient,
+        ),
+        child: Column(
+          children: [
+            CustomAppBar(
+              title: _getGreeting(),
+              subtitle: 'Welcome back to your farm management dashboard',
+              actions: [
+                IconButton(
+                  onPressed: _showNotifications,
+                  icon: Stack(
+                    children: [
+                      const Icon(Icons.notifications_outlined, color: Colors.white),
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                  ),
+                  icon: const Icon(Icons.person_outline, color: Colors.white),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                ),
+                child: RefreshIndicator(
+                  onRefresh: _loadDashboardData,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildQuickStats(),
+                        const SizedBox(height: 24),
+                        _buildWeatherSection(),
+                        const SizedBox(height: 24),
+                        _buildAlertsSection(),
+                        const SizedBox(height: 24),
+                        _buildQuickActions(),
+                        const SizedBox(height: 24),
+                        _buildRecentActivity(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickStats() {
+    return Consumer<AppProvider>(
+      builder: (context, provider, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Farm Overview',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: AnalyticsCard(
+                    title: 'Total Fields',
+                    value: provider.fields.length.toString(),
+                    icon: Icons.grid_on,
+                    color: AppTheme.primaryGreen,
+                    subtitle: 'Active farming areas',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: AnalyticsCard(
+                    title: 'Active Crops',
+                    value: provider.crops.length.toString(),
+                    icon: Icons.agriculture,
+                    color: AppTheme.accentGreen,
+                    subtitle: 'Different varieties',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: AnalyticsCard(
+                    title: 'Pending Tasks',
+                    value: provider.tasks.where((t) => t.status.toString().contains('pending')).length.toString(),
+                    icon: Icons.assignment,
+                    color: AppTheme.warningOrange,
+                    subtitle: 'Require attention',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: AnalyticsCard(
+                    title: 'Total Expenses',
+                    value: '₹${_calculateTotalExpenses(provider.expenses)}',
+                    icon: Icons.currency_rupee,
+                    color: AppTheme.errorRed,
+                    subtitle: 'This month',
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildWeatherSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Text(
+              'Weather Conditions',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const Spacer(),
+            TextButton.icon(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const WeatherScreen()),
+              ),
+              icon: const Icon(Icons.arrow_forward_ios, size: 16),
+              label: const Text('View Details'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1976D2), Color(0xFF42A5F5)],
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: const WeatherWidget(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAlertsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Alerts & Notifications',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 16),
+        const RecentAlertsWidget(),
+      ],
+    );
+  }
+
+  Widget _buildQuickActions() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Quick Actions',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 16),
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1.0,
+          children: [
+            _buildActionCard(
+              'Fields',
+              Icons.agriculture,
+              AppTheme.primaryGreen,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const FieldsScreen()),
+              ),
+            ),
+            _buildActionCard(
+              'Tasks',
+              Icons.assignment,
+              AppTheme.warningOrange,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const TasksScreen()),
+              ),
+            ),
+            _buildActionCard(
+              'Expenses',
+              Icons.receipt,
+              AppTheme.errorRed,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ExpensesScreen()),
+              ),
+            ),
+            _buildActionCard(
+              'Inventory',
+              Icons.inventory,
+              AppTheme.primaryBlue,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const InventoryScreen()),
+              ),
+            ),
+            _buildActionCard(
+              'Reports',
+              Icons.analytics,
+              AppTheme.accentBlue,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ReportsScreen()),
+              ),
+            ),
+            _buildActionCard(
+              'More',
+              Icons.apps,
+              Colors.grey.shade600,
+              _showMoreOptions,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionCard(
+    String label,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.2)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 32, color: color),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentActivity() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Recent Activity',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Column(
+            children: [
+              _buildActivityItem(
+                'New field added',
+                'North Field - 2.5 hectares',
+                Icons.add_circle,
+                AppTheme.successGreen,
+                '2 hours ago',
+              ),
+              _buildActivityItem(
+                'Task completed',
+                'Irrigation system maintenance',
+                Icons.check_circle,
+                AppTheme.primaryBlue,
+                '5 hours ago',
+              ),
+              _buildActivityItem(
+                'Expense recorded',
+                'Fertilizer purchase - ₹15,000',
+                Icons.receipt,
+                AppTheme.warningOrange,
+                '1 day ago',
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActivityItem(
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+    String time,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 16),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            time,
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good Morning';
+    } else if (hour < 17) {
+      return 'Good Afternoon';
+    } else {
+      return 'Good Evening';
+    }
+  }
+
+  String _calculateTotalExpenses(List expenses) {
+    if (expenses.isEmpty) return '0';
+    
+    final now = DateTime.now();
+    final currentMonth = DateTime(now.year, now.month);
+    
+    double total = 0;
+    for (final expense in expenses) {
+      // Assuming expense has a date and amount field
+      try {
+        final expenseDate = expense.date ?? DateTime.now();
+        if (expenseDate.isAfter(currentMonth)) {
+          total += expense.amount ?? 0;
+        }
+      } catch (e) {
+        // Handle any parsing errors
+      }
+    }
+    
+    return total.toStringAsFixed(0);
+  }
+
+  void _showNotifications() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Notifications',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text('No new notifications'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showMoreOptions() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'More Options',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+                // Navigate to settings
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.help),
+              title: const Text('Help & Support'),
+              onTap: () {
+                Navigator.pop(context);
+                // Navigate to help
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text('About'),
+              onTap: () {
+                Navigator.pop(context);
+                // Show about dialog
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});

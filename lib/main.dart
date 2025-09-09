@@ -1,15 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
-import 'screens/dashboard_screen.dart';
+import 'widgets/main_navigation.dart';
 import 'services/auth_service.dart';
 import 'services/notification_service.dart';
 import 'providers/app_provider.dart';
+import 'themes/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Configure system UI overlay style for Android 15 Material You
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+  
+  // Set preferred orientations
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  
   await Firebase.initializeApp();
   await NotificationService().init();
   runApp(const MyApp());
@@ -26,27 +45,17 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Farm Management Pro',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.green,
-            brightness: Brightness.light,
-          ),
-          useMaterial3: true,
-          fontFamily: 'Roboto',
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 16),
+        theme: AppTheme.lightTheme,
+        home: SplashScreenFlow(),
+        debugShowCheckedModeBanner: false,
+        builder: (context, child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaler: TextScaler.linear(1.0), // Prevent text scaling issues
             ),
-          ),
-          cardTheme: CardTheme(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 4,
-          ),
+            child: child!,
+          );
+        },
         ),
         home: SplashScreenFlow(),
         debugShowCheckedModeBanner: false,
@@ -66,15 +75,33 @@ class _SplashScreenFlowState extends State<SplashScreenFlow> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 2), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
-    });
+    _checkAuthState();
+  }
+
+  Future<void> _checkAuthState() async {
+    await Future.delayed(const Duration(seconds: 2));
+    
+    if (mounted) {
+      // Check if user is already logged in
+      final authService = AuthService();
+      final user = authService.currentUser;
+      
+      if (user != null) {
+        // User is logged in, go to main navigation
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+        );
+      } else {
+        // User not logged in, go to login screen
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SplashScreen();
+    return const SplashScreen();
   }
 }
