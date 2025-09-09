@@ -2,231 +2,283 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'screens/modern_farm_dashboard.dart';
-import 'models/indian_agriculture_models.dart';
-import 'services/ai_farming_service.dart';
+import 'screens/authentication_screen.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Firebase
-  await Firebase.initializeApp();
-  
-  // Initialize Sentry for error tracking
-  await SentryFlutter.init(
-    (options) {
-      options.dsn = 'YOUR_SENTRY_DSN'; // Replace with actual DSN
-      options.tracesSampleRate = 1.0;
-    },
-    appRunner: () => runApp(
-      ProviderScope(
-        child: MyApp(),
-      ),
-    ),
-  );
+void main() {
+  runApp(const ProviderScope(child: IndianFarmingApp()));
 }
 
-class MyApp extends ConsumerWidget {
+class IndianFarmingApp extends StatelessWidget {
+  const IndianFarmingApp({super.key});
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        ColorScheme lightScheme;
-        ColorScheme darkScheme;
+        // Modern Material You color schemes
+        ColorScheme lightScheme = lightDynamic ?? ColorScheme.fromSeed(
+          seedColor: const Color(0xFF4CAF50),
+          brightness: Brightness.light,
+        );
 
-        if (lightDynamic != null && darkDynamic != null) {
-          lightScheme = lightDynamic.harmonized();
-          darkScheme = darkDynamic.harmonized();
-        } else {
-          // Fallback colors inspired by Indian agriculture
-          lightScheme = ColorScheme.fromSeed(
-            seedColor: const Color(0xFF4CAF50), // Agriculture green
-            brightness: Brightness.light,
-          );
-          darkScheme = ColorScheme.fromSeed(
-            seedColor: const Color(0xFF4CAF50),
-            brightness: Brightness.dark,
-          );
-        }
+        ColorScheme darkScheme = darkDynamic ?? ColorScheme.fromSeed(
+          seedColor: const Color(0xFF4CAF50),
+          brightness: Brightness.dark,
+        );
 
         return MaterialApp(
-          title: 'भारतीय किसान ऐप - Indian Farmer App',
+          title: 'भारतीय कृषि - Indian Farming',
           debugShowCheckedModeBanner: false,
-          
-          // Light Theme
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightScheme,
-            textTheme: GoogleFonts.hindTextTheme(),
-            appBarTheme: AppBarTheme(
-              centerTitle: false,
-              elevation: 0,
-              scrolledUnderElevation: 4,
+            textTheme: GoogleFonts.robotoTextTheme().copyWith(
+              // Modern typography scale
+              displayLarge: GoogleFonts.roboto(
+                fontSize: 57,
+                fontWeight: FontWeight.w400,
+                letterSpacing: -0.25,
+              ),
+              displayMedium: GoogleFonts.roboto(
+                fontSize: 45,
+                fontWeight: FontWeight.w400,
+              ),
+              displaySmall: GoogleFonts.roboto(
+                fontSize: 36,
+                fontWeight: FontWeight.w400,
+              ),
+              headlineLarge: GoogleFonts.roboto(
+                fontSize: 32,
+                fontWeight: FontWeight.w400,
+              ),
+              headlineMedium: GoogleFonts.roboto(
+                fontSize: 28,
+                fontWeight: FontWeight.w400,
+              ),
+              headlineSmall: GoogleFonts.roboto(
+                fontSize: 24,
+                fontWeight: FontWeight.w400,
+              ),
+              titleLarge: GoogleFonts.roboto(
+                fontSize: 22,
+                fontWeight: FontWeight.w500,
+              ),
+              titleMedium: GoogleFonts.roboto(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.15,
+              ),
+              titleSmall: GoogleFonts.roboto(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.1,
+              ),
+              bodyLarge: GoogleFonts.roboto(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 0.5,
+              ),
+              bodyMedium: GoogleFonts.roboto(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 0.25,
+              ),
+              bodySmall: GoogleFonts.roboto(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 0.4,
+              ),
+              labelLarge: GoogleFonts.roboto(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.1,
+              ),
+              labelMedium: GoogleFonts.roboto(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.5,
+              ),
+              labelSmall: GoogleFonts.roboto(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.5,
+              ),
             ),
-            cardTheme: CardTheme(
-              elevation: 2,
-              margin: EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+            cardTheme: CardThemeData(
+              elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              color: lightScheme.surfaceContainerHigh,
+            ),
+            appBarTheme: AppBarTheme(
+              elevation: 0,
+              centerTitle: false,
+              scrolledUnderElevation: 0,
+              titleTextStyle: GoogleFonts.roboto(
+                fontSize: 22,
+                fontWeight: FontWeight.w400,
+                color: lightScheme.onSurface,
+              ),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                textStyle: GoogleFonts.roboto(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.1,
+                ),
               ),
             ),
             filledButtonTheme: FilledButtonThemeData(
               style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                textStyle: GoogleFonts.roboto(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.1,
                 ),
               ),
             ),
-            floatingActionButtonTheme: FloatingActionButtonThemeData(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            navigationBarTheme: NavigationBarThemeData(
-              labelTextStyle: WidgetStateProperty.resolveWith((states) {
-                return GoogleFonts.hind(
-                  fontSize: 12,
+            outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                side: BorderSide(color: lightScheme.outline),
+                textStyle: GoogleFonts.roboto(
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
-                );
-              }),
+                  letterSpacing: 0.1,
+                ),
+              ),
             ),
             inputDecorationTheme: InputDecorationTheme(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
               filled: true,
+              fillColor: lightScheme.surfaceContainerHighest,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: lightScheme.primary, width: 2),
+              ),
+              labelStyle: GoogleFonts.roboto(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            chipTheme: ChipThemeData(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              backgroundColor: lightScheme.surfaceContainerHigh,
+              selectedColor: lightScheme.primary,
+              labelStyle: GoogleFonts.roboto(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+              side: BorderSide.none,
             ),
           ),
-          
-          // Dark Theme
           darkTheme: ThemeData(
             useMaterial3: true,
             colorScheme: darkScheme,
-            textTheme: GoogleFonts.hindTextTheme().apply(
-              bodyColor: darkScheme.onSurface,
-              displayColor: darkScheme.onSurface,
+            textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme),
+            cardTheme: CardThemeData(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              color: darkScheme.surfaceContainerHigh,
             ),
             appBarTheme: AppBarTheme(
-              centerTitle: false,
               elevation: 0,
-              scrolledUnderElevation: 4,
-            ),
-            cardTheme: CardTheme(
-              elevation: 2,
-              margin: EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+              centerTitle: false,
+              scrolledUnderElevation: 0,
+              titleTextStyle: GoogleFonts.roboto(
+                fontSize: 22,
+                fontWeight: FontWeight.w400,
+                color: darkScheme.onSurface,
               ),
             ),
-            filledButtonTheme: FilledButtonThemeData(
-              style: FilledButton.styleFrom(
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                textStyle: GoogleFonts.roboto(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.1,
                 ),
               ),
             ),
-            floatingActionButtonTheme: FloatingActionButtonThemeData(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            navigationBarTheme: NavigationBarThemeData(
-              labelTextStyle: WidgetStateProperty.resolveWith((states) {
-                return GoogleFonts.hind(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                );
-              }),
-            ),
             inputDecorationTheme: InputDecorationTheme(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
               filled: true,
+              fillColor: darkScheme.surfaceContainerHighest,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: darkScheme.primary, width: 2),
+              ),
+              labelStyle: GoogleFonts.roboto(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
-          
-          themeMode: ThemeMode.system,
-          home: SplashScreen(),
+          home: const SplashScreen(),
         );
       },
     );
   }
 }
 
-class SplashScreen extends ConsumerStatefulWidget {
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
-  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _logoController;
-  late AnimationController _textController;
-  late Animation<double> _logoAnimation;
-  late Animation<double> _textAnimation;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    
-    _logoController = AnimationController(
-      duration: Duration(milliseconds: 1500),
-      vsync: this,
-    );
-    
-    _textController = AnimationController(
-      duration: Duration(milliseconds: 1000),
-      vsync: this,
-    );
-
-    _logoAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _logoController,
-      curve: Curves.elasticOut,
-    ));
-
-    _textAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _textController,
-      curve: Curves.easeInOut,
-    ));
-
-    _startAnimation();
-  }
-
-  void _startAnimation() async {
-    await Future.delayed(Duration(milliseconds: 500));
-    _logoController.forward();
-    
-    await Future.delayed(Duration(milliseconds: 500));
-    _textController.forward();
-    
-    await Future.delayed(Duration(milliseconds: 2000));
-    _navigateToMain();
-  }
-
-  void _navigateToMain() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => ModernFarmDashboard(
-          farm: _createSampleFarm(),
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _logoController.dispose();
-    _textController.dispose();
-    super.dispose();
+    // Navigate to authentication screen after a brief delay
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => AuthenticationScreen(),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -234,15 +286,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final colorScheme = Theme.of(context).colorScheme;
     
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              colorScheme.primary.withAlpha(100),
-              colorScheme.secondary.withAlpha(50),
-              colorScheme.tertiary.withAlpha(30),
+              colorScheme.primary,
+              colorScheme.primaryContainer,
             ],
           ),
         ),
@@ -250,229 +302,73 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AnimatedBuilder(
-                animation: _logoAnimation,
-                builder: (context, child) {
-                  return Transform.scale(
-                    scale: _logoAnimation.value,
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: colorScheme.primary,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorScheme.primary.withAlpha(100),
-                            blurRadius: 20,
-                            spreadRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.agriculture,
-                        size: 60,
-                        color: colorScheme.onPrimary,
-                      ),
+              // Modern App Icon with animation
+              Container(
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(32),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
                     ),
-                  );
-                },
+                  ],
+                ),
+                child: Icon(
+                  Icons.agriculture,
+                  size: 80,
+                  color: colorScheme.primary,
+                ),
               ),
+              const SizedBox(height: 48),
               
-              SizedBox(height: 32),
-              
-              AnimatedBuilder(
-                animation: _textAnimation,
-                builder: (context, child) {
-                  return Opacity(
-                    opacity: _textAnimation.value,
-                    child: Column(
-                      children: [
-                        Text(
-                          'भारतीय किसान ऐप',
-                          style: GoogleFonts.hind(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.onSurface,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Indian Farmer App',
-                          style: GoogleFonts.roboto(
-                            fontSize: 18,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        Text(
-                          'आधुनिक तकनीक के साथ खेती',
-                          style: GoogleFonts.hind(
-                            fontSize: 14,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+              // App Title with modern typography
+              Text(
+                'भारतीय कृषि',
+                style: GoogleFonts.roboto(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w300,
+                  color: Colors.white,
+                  letterSpacing: -0.5,
+                ),
               ),
+              const SizedBox(height: 8),
+              Text(
+                'Indian Farming App',
+                style: GoogleFonts.roboto(
+                  fontSize: 18,
+                  color: Colors.white.withOpacity(0.8),
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 64),
               
-              SizedBox(height: 64),
-              
-              AnimatedBuilder(
-                animation: _textAnimation,
-                builder: (context, child) {
-                  return Opacity(
-                    opacity: _textAnimation.value,
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        colorScheme.primary,
-                      ),
-                    ),
-                  );
-                },
+              // Modern Loading Indicator
+              SizedBox(
+                width: 48,
+                height: 48,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 3,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'किसानों के लिए आधुनिक समाधान',
+                style: GoogleFonts.roboto(
+                  fontSize: 14,
+                  color: Colors.white.withOpacity(0.7),
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.25,
+                ),
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  FarmProfile _createSampleFarm() {
-    return FarmProfile(
-      id: 'farm_001',
-      ownerName: 'राम सिंह',
-      farmName: 'श्री राम फार्म',
-      location: 'सीकर, राजस्थान',
-      state: IndianState.rajasthan,
-      totalLandArea: 5.5,
-      soilType: SoilType.alluvial,
-      irrigationSource: IrrigationSource.tubewell,
-      farmType: FarmType.cropFarming,
-      establishedDate: DateTime(2015, 4, 15),
-      contactNumber: '+91-9876543210',
-      email: 'ramsingh@farmer.in',
-      aadhaarNumber: '1234-5678-9012',
-      
-      cropFields: [
-        CropField(
-          id: 'field_001',
-          cropName: 'Wheat',
-          variety: 'HD 3086',
-          areaInHectares: 2.5,
-          sowingDate: DateTime(2024, 11, 15),
-          expectedYield: 45.0,
-          season: CropSeason.rabi,
-          soilType: SoilType.alluvial,
-          irrigationMethod: IrrigationMethod.sprinkler,
-          expenses: [],
-          activities: [],
-        ),
-        CropField(
-          id: 'field_002',
-          cropName: 'Mustard',
-          variety: 'Varuna',
-          areaInHectares: 1.5,
-          sowingDate: DateTime(2024, 10, 20),
-          expectedYield: 18.0,
-          season: CropSeason.rabi,
-          soilType: SoilType.alluvial,
-          irrigationMethod: IrrigationMethod.drip,
-          expenses: [],
-          activities: [],
-        ),
-      ],
-      
-      instruments: [
-        FarmInstrumentDetail(
-          id: 'tractor_001',
-          type: FarmInstrument.tractor,
-          name: 'Mahindra 575 DI',
-          hindiName: 'महिंद्रा 575 डीआई',
-          description: '47 HP Tractor for all farming operations',
-          brand: 'Mahindra',
-          model: '575 DI',
-          purchasePrice: 850000.0,
-          purchaseDate: DateTime(2022, 3, 15),
-          condition: 'Good',
-          powerSource: 'Diesel',
-          size: 'Medium',
-          suitableCrops: ['Wheat', 'Mustard', 'Barley'],
-          features: ['4WD', 'Power Steering', 'Hydraulic Lift'],
-          maintenance: MaintenanceInfo(
-            frequency: 'Every 250 hours',
-            checklist: ['Engine Oil', 'Filters', 'Belts'],
-            estimatedCost: 8000.0,
-            lastMaintenance: DateTime(2024, 6, 1),
-            nextMaintenance: DateTime(2024, 12, 1),
-            commonIssues: ['Engine overheating', 'Hydraulic problems'],
-            spareParts: ['Oil filter', 'Air filter', 'Belts'],
-          ),
-          maintenanceHistory: [],
-          usageHistory: [],
-        ),
-      ],
-      
-      livestock: [
-        LivestockRecord(
-          id: 'cow_001',
-          type: LivestockType.cow,
-          breed: 'Gir',
-          age: 36,
-          weight: 450.0,
-          healthStatus: 'Healthy',
-          milkProductionPerDay: 12.0,
-          feedType: 'Mixed feed + Grass',
-          monthlyFeedCost: 3500.0,
-          vaccinationDate: DateTime(2024, 6, 15),
-          nextVaccinationDate: DateTime(2024, 12, 15),
-          vetContact: 'Dr. Sharma - 9876543210',
-          acquisitionDate: DateTime(2022, 1, 10),
-          acquisitionCost: 45000.0,
-        ),
-      ],
-      
-      expenses: [
-        FarmExpense(
-          id: 'exp_001',
-          amount: 15000.0,
-          category: ExpenseCategory.fertilizers,
-          description: 'DAP और यूरिया खरीदी',
-          date: DateTime(2024, 11, 1),
-          paymentMethod: PaymentMethod.digital,
-          relatedCropFieldId: 'field_001',
-        ),
-        FarmExpense(
-          id: 'exp_002',
-          amount: 8000.0,
-          category: ExpenseCategory.seeds,
-          description: 'गेहूं के बीज',
-          date: DateTime(2024, 10, 28),
-          paymentMethod: PaymentMethod.cash,
-          relatedCropFieldId: 'field_001',
-        ),
-      ],
-      
-      incomes: [
-        FarmIncome(
-          id: 'inc_001',
-          amount: 125000.0,
-          source: IncomeSource.cropSale,
-          description: 'खरीफ मक्का की बिक्री',
-          date: DateTime(2024, 10, 15),
-          buyerName: 'राजस्थान अनाज मंडी',
-          quantity: 50.0,
-          rate: 2500.0,
-          relatedCropFieldId: 'field_002',
-        ),
-      ],
-      
-      loans: [],
-      subsidies: [],
-      createdAt: DateTime(2024, 1, 1),
-      lastUpdated: DateTime.now(),
     );
   }
 }
