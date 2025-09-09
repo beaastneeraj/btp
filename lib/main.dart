@@ -3,16 +3,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/authentication_screen.dart';
+import 'screens/main_navigation_screen.dart';
+import 'providers/theme_provider.dart';
+import 'services/localization_service.dart';
 
 void main() {
   runApp(const ProviderScope(child: IndianFarmingApp()));
 }
 
-class IndianFarmingApp extends StatelessWidget {
+class IndianFarmingApp extends ConsumerWidget {
   const IndianFarmingApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appSettings = ref.watch(appSettingsProvider);
+    final themeMode = appSettings.isDarkMode ? ThemeMode.dark : ThemeMode.light;
+    final locale = appSettings.locale;
+
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         // Modern Material You color schemes
@@ -27,8 +34,9 @@ class IndianFarmingApp extends StatelessWidget {
         );
 
         return MaterialApp(
-          title: 'भारतीय कृषि - Indian Farming',
+          title: 'appTitle'.tr(locale.languageCode),
           debugShowCheckedModeBanner: false,
+          themeMode: themeMode,
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightScheme,
@@ -251,6 +259,14 @@ class IndianFarmingApp extends StatelessWidget {
               ),
             ),
           ),
+          locale: locale,
+          supportedLocales: const [
+            Locale('en', 'US'),
+            Locale('hi', 'IN'),
+          ],
+          localizationsDelegates: const [
+            // Add localizations delegates here if needed
+          ],
           home: const SplashScreen(),
         );
       },
@@ -258,23 +274,23 @@ class IndianFarmingApp extends StatelessWidget {
   }
 }
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Navigate to authentication screen after a brief delay
+    // Navigate to main navigation after a brief delay
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => AuthenticationScreen(),
+            builder: (context) => const MainNavigationScreen(),
           ),
         );
       }
@@ -283,7 +299,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appSettings = ref.watch(appSettingsProvider);
     final colorScheme = Theme.of(context).colorScheme;
+    final languageCode = appSettings.locale.languageCode;
     
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -326,7 +344,7 @@ class _SplashScreenState extends State<SplashScreen> {
               
               // App Title with modern typography
               Text(
-                'भारतीय कृषि',
+                languageCode == 'hi' ? 'भारतीय कृषि' : 'Indian Farming',
                 style: GoogleFonts.roboto(
                   fontSize: 36,
                   fontWeight: FontWeight.w300,
@@ -336,7 +354,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Indian Farming App',
+                'appSubtitle'.tr(languageCode),
                 style: GoogleFonts.roboto(
                   fontSize: 18,
                   color: Colors.white.withOpacity(0.8),
@@ -357,7 +375,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               const SizedBox(height: 24),
               Text(
-                'किसानों के लिए आधुनिक समाधान',
+                'loading'.tr(languageCode),
                 style: GoogleFonts.roboto(
                   fontSize: 14,
                   color: Colors.white.withOpacity(0.7),
