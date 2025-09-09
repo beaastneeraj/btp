@@ -3,6 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'weather_screen.dart';
 import 'crop_advice_screen.dart';
 import 'market_prices_screen.dart';
+import 'analytics_screen.dart';
+import 'cattle_screen.dart';
+import 'irrigation_screen.dart';
+import 'profile_screen.dart';
 
 class SimpleDashboard extends StatefulWidget {
   const SimpleDashboard({super.key});
@@ -15,6 +19,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
   late List<AnimationController> _cardAnimations;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -25,7 +30,7 @@ class _SimpleDashboardState extends State<SimpleDashboard>
     );
     
     _cardAnimations = List.generate(
-      6,
+      8,
       (index) => AnimationController(
         duration: Duration(milliseconds: 600 + (index * 100)),
         vsync: this,
@@ -47,7 +52,8 @@ class _SimpleDashboardState extends State<SimpleDashboard>
     
     final List<Map<String, dynamic>> features = [
       {
-        'hindiTitle': 'मौसम जानकारी',
+        'title': 'Weather Forecast',
+        'subtitle': 'Real-time weather data',
         'englishTitle': 'Weather Info',
         'icon': Icons.wb_sunny,
         'color': const Color(0xFFFF6B35),
