@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'fields_screen.dart';
 import 'crops_screen.dart';
 import 'expenses_screen.dart';
@@ -6,6 +7,12 @@ import 'inventory_screen.dart';
 import 'tasks_screen.dart';
 import 'weather_screen.dart';
 import 'reports_screen.dart';
+import 'profile_screen.dart';
+import '../widgets/analytics_dashboard.dart';
+import '../widgets/weather_widget.dart';
+import '../widgets/inventory_alert_widget.dart';
+import '../widgets/task_reminder_widget.dart';
+import '../providers/app_provider.dart';
 
 class DashboardScreen extends StatelessWidget {
   @override
