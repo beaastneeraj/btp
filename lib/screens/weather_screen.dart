@@ -4,56 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../providers/theme_provider.dart';
 import '../services/localization_service.dart';
+import '../services/weather_service.dart';
 
 // Weather data providers
-final weatherDataProvider = StateProvider<WeatherData?>((ref) => null);
+final weatherServiceProvider = Provider<WeatherService>((ref) => WeatherService());
+final weatherDataProvider = StateProvider<Map<String, dynamic>?>((ref) => null);
 final locationProvider = StateProvider<String>((ref) => 'Delhi, India');
-
-class WeatherData {
-  final String location;
-  final double temperature;
-  final String condition;
-  final String description;
-  final int humidity;
-  final double windSpeed;
-  final double precipitation;
-  final int uvIndex;
-  final double pressure;
-  final String icon;
-  final List<WeatherForecast> forecast;
-
-  WeatherData({
-    required this.location,
-    required this.temperature,
-    required this.condition,
-    required this.description,
-    required this.humidity,
-    required this.windSpeed,
-    required this.precipitation,
-    required this.uvIndex,
-    required this.pressure,
-    required this.icon,
-    required this.forecast,
-  });
-}
-
-class WeatherForecast {
-  final DateTime date;
-  final double maxTemp;
-  final double minTemp;
-  final String condition;
-  final String icon;
-  final double precipitation;
-
-  WeatherForecast({
-    required this.date,
-    required this.maxTemp,
-    required this.minTemp,
-    required this.condition,
-    required this.icon,
-    required this.precipitation,
-  });
-}
+final forecastDataProvider = StateProvider<List<Map<String, dynamic>>?>((ref) => null);
 
 class WeatherScreen extends ConsumerStatefulWidget {
   const WeatherScreen({super.key});
@@ -85,474 +42,87 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
       _isLoading = true;
     });
 
-    // Simulate API call delay
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final weatherService = ref.read(weatherServiceProvider);
+      final location = ref.read(locationProvider);
 
-    if (!_mounted) return;
+      // Get weather data from API
+      final currentWeather = await weatherService.getCurrentWeatherByCity(location);
+      final forecast = await weatherService.getWeatherForecastByCity(location);
 
-    // Mock weather data
-    final weatherData = WeatherData(
-      location: ref.read(locationProvider),
-      temperature: 28.5,
-      condition: 'Partly Cloudy',
-      description: 'Perfect farming weather with good sunshine',
-      humidity: 65,
-      windSpeed: 12.5,
-      precipitation: 0,
-      uvIndex: 7,
-      pressure: 1013.2,
-      icon: 'partly_cloudy',
-      forecast: [
-        WeatherForecast(
-          date: DateTime.now().add(const Duration(days: 1)),
-          maxTemp: 32,
-          minTemp: 22,
-          condition: 'Sunny',
-          icon: 'sunny',
-          precipitation: 0,
-        ),
-        WeatherForecast(
-          date: DateTime.now().add(const Duration(days: 2)),
-          maxTemp: 29,
-          minTemp: 20,
-          condition: 'Partly Cloudy',
-          icon: 'partly_cloudy',
-          precipitation: 10,
-        ),
-        WeatherForecast(
-          date: DateTime.now().add(const Duration(days: 3)),
-          maxTemp: 26,
-          minTemp: 18,
-          condition: 'Light Rain',
-          icon: 'rainy',
-          precipitation: 75,
-        ),
-        WeatherForecast(
-          date: DateTime.now().add(const Duration(days: 4)),
-          maxTemp: 30,
-          minTemp: 21,
-          condition: 'Cloudy',
-          icon: 'cloudy',
-          precipitation: 20,
-        ),
-        WeatherForecast(
-          date: DateTime.now().add(const Duration(days: 5)),
-          maxTemp: 33,
-          minTemp: 24,
-          condition: 'Sunny',
-          icon: 'sunny',
-          precipitation: 0,
-        ),
-      ],
-    );
-
-    if (_mounted) {
-      ref.read(weatherDataProvider.notifier).state = weatherData;
-      setState(() {
-        _isLoading = false;
-      });
+      if (_mounted) {
+        ref.read(weatherDataProvider.notifier).state = currentWeather;
+        ref.read(forecastDataProvider.notifier).state = forecast;
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (_mounted) {
+        // Fallback to mock data on error
+        final mockWeather = {
+          'location': ref.read(locationProvider),
+          'temperature': 28.5,
+          'condition': 'Partly Cloudy',
+          'description': 'Pleasant farming weather',
+          'humidity': 65,
+          'windSpeed': 12.5,
+          'precipitation': 0.0,
+          'uvIndex': 7,
+          'pressure': 1013.2,
+          'icon': '02d',
+        };
+        
+        ref.read(weatherDataProvider.notifier).state = mockWeather;
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final appSettings = ref.watch(appSettingsProvider);
-    final languageCode = appSettings.locale.languageCode;
-    final colorScheme = Theme.of(context).colorScheme;
     final weatherData = ref.watch(weatherDataProvider);
+    final forecast = ref.watch(forecastDataProvider);
+    final isDarkMode = ref.watch(themeModeProvider) == ThemeMode.dark;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: isDarkMode ? Colors.grey[900] : Colors.grey[50],
       appBar: AppBar(
-        title: Text('weather'.tr(languageCode)),
-        backgroundColor: colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
+        title: Text(
+          LocalizationService.translate('weather', 'en'),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: isDarkMode ? Colors.grey[850] : Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: colorScheme.onSurface),
             onPressed: _loadWeatherData,
-          ),
-          IconButton(
-            icon: Icon(Icons.location_on, color: colorScheme.onSurface),
-            onPressed: () => _showLocationDialog(context, languageCode),
+            icon: Icon(_isLoading ? Icons.hourglass_empty : Icons.refresh),
           ),
         ],
       ),
-      body: _isLoading
+      body: _isLoading && weatherData == null
           ? const Center(child: CircularProgressIndicator())
           : weatherData == null
-              ? _buildErrorState(context, languageCode, colorScheme)
-              : RefreshIndicator(
-                  onRefresh: _loadWeatherData,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Current Weather Card
-                        _buildCurrentWeatherCard(weatherData, colorScheme, languageCode),
-                        
-                        const SizedBox(height: 20),
-                        
-                        // Weather Details Grid
-                        _buildWeatherDetailsGrid(weatherData, colorScheme, languageCode),
-                        
-                        const SizedBox(height: 20),
-                        
-                        // Farming Recommendations
-                        _buildFarmingRecommendations(weatherData, colorScheme, languageCode),
-                        
-                        const SizedBox(height: 20),
-                        
-                        // 5-Day Forecast
-                        _buildForecastSection(weatherData, colorScheme, languageCode),
-                      ],
-                    ),
-                  ),
-                ),
+              ? _buildErrorState()
+              : _buildWeatherContent(weatherData, forecast ?? []),
     );
   }
 
-  Widget _buildCurrentWeatherCard(WeatherData data, ColorScheme colorScheme, String languageCode) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colorScheme.primary,
-            colorScheme.primary.withOpacity(0.8),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.primary.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Location and Time
-          Row(
-            children: [
-              Icon(Icons.location_on, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  data.location,
-                  style: GoogleFonts.roboto(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              Text(
-                DateFormat('MMM d, h:mm a').format(DateTime.now()),
-                style: GoogleFonts.roboto(
-                  color: Colors.white.withOpacity(0.8),
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 24),
-          
-          // Main Weather Info
-          Row(
-            children: [
-              // Weather Icon
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Icon(
-                  _getWeatherIcon(data.icon),
-                  size: 60,
-                  color: Colors.white,
-                ),
-              ),
-              
-              const SizedBox(width: 24),
-              
-              // Temperature and Description
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${data.temperature.toInt()}°C',
-                      style: GoogleFonts.roboto(
-                        color: Colors.white,
-                        fontSize: 48,
-                        fontWeight: FontWeight.w300,
-                        height: 1,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      data.condition,
-                      style: GoogleFonts.roboto(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Text(
-                      data.description,
-                      style: GoogleFonts.roboto(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWeatherDetailsGrid(WeatherData data, ColorScheme colorScheme, String languageCode) {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      childAspectRatio: 1.5,
-      children: [
-        _buildDetailCard(
-          'Humidity',
-          '${data.humidity}%',
-          Icons.water_drop,
-          colorScheme,
-        ),
-        _buildDetailCard(
-          'Wind Speed',
-          '${data.windSpeed} km/h',
-          Icons.air,
-          colorScheme,
-        ),
-        _buildDetailCard(
-          'UV Index',
-          '${data.uvIndex}/10',
-          Icons.wb_sunny,
-          colorScheme,
-        ),
-        _buildDetailCard(
-          'Pressure',
-          '${data.pressure.toInt()} hPa',
-          Icons.compress,
-          colorScheme,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDetailCard(String title, String value, IconData icon, ColorScheme colorScheme) {
-    return Card(
-      elevation: 0,
-      color: colorScheme.surfaceContainerHigh,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: colorScheme.primary, size: 32),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: GoogleFonts.roboto(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: colorScheme.onSurface,
-              ),
-            ),
-            Text(
-              title,
-              style: GoogleFonts.roboto(
-                fontSize: 12,
-                color: colorScheme.onSurface.withOpacity(0.7),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFarmingRecommendations(WeatherData data, ColorScheme colorScheme, String languageCode) {
-    final recommendations = _getFarmingRecommendations(data);
-    
-    return Card(
-      elevation: 0,
-      color: colorScheme.surfaceContainerHigh,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.agriculture, color: colorScheme.primary),
-                const SizedBox(width: 12),
-                Text(
-                  'Farming Recommendations',
-                  style: GoogleFonts.roboto(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...recommendations.map((rec) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.circle,
-                    size: 8,
-                    color: colorScheme.primary,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      rec,
-                      style: GoogleFonts.roboto(
-                        fontSize: 14,
-                        color: colorScheme.onSurface.withOpacity(0.8),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildForecastSection(WeatherData data, ColorScheme colorScheme, String languageCode) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '5-Day Forecast',
-          style: GoogleFonts.roboto(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: colorScheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 140,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: data.forecast.length,
-            itemBuilder: (context, index) {
-              final forecast = data.forecast[index];
-              return Container(
-                width: 100,
-                margin: const EdgeInsets.only(right: 12),
-                child: Card(
-                  elevation: 0,
-                  color: colorScheme.surfaceContainerHigh,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          DateFormat('EEE').format(forecast.date),
-                          style: GoogleFonts.roboto(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: colorScheme.onSurface,
-                          ),
-                        ),
-                        Icon(
-                          _getWeatherIcon(forecast.icon),
-                          color: colorScheme.primary,
-                          size: 28,
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              '${forecast.maxTemp.toInt()}°',
-                              style: GoogleFonts.roboto(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                            Text(
-                              '${forecast.minTemp.toInt()}°',
-                              style: GoogleFonts.roboto(
-                                fontSize: 11,
-                                color: colorScheme.onSurface.withOpacity(0.6),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildErrorState(BuildContext context, String languageCode, ColorScheme colorScheme) {
+  Widget _buildErrorState() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.cloud_off,
-            size: 80,
-            color: colorScheme.onSurface.withOpacity(0.5),
-          ),
+          Icon(Icons.error_outline, size: 64, color: Colors.grey),
           const SizedBox(height: 16),
           Text(
-            'Unable to fetch weather data',
-            style: GoogleFonts.roboto(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: colorScheme.onSurface,
-            ),
+            'Failed to load weather data',
+            style: GoogleFonts.inter(fontSize: 18, color: Colors.grey),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Please check your internet connection',
-            style: GoogleFonts.roboto(
-              fontSize: 14,
-              color: colorScheme.onSurface.withOpacity(0.7),
-            ),
-          ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _loadWeatherData,
             child: Text('Retry'),
@@ -562,88 +132,351 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
     );
   }
 
-  IconData _getWeatherIcon(String condition) {
-    switch (condition) {
-      case 'sunny':
-        return Icons.wb_sunny;
-      case 'partly_cloudy':
-        return Icons.wb_cloudy;
-      case 'cloudy':
-        return Icons.cloud;
-      case 'rainy':
-        return Icons.grain;
-      case 'stormy':
-        return Icons.thunderstorm;
-      default:
-        return Icons.wb_sunny;
-    }
-  }
-
-  List<String> _getFarmingRecommendations(WeatherData data) {
-    List<String> recommendations = [];
+  Widget _buildWeatherContent(Map<String, dynamic> weather, List<Map<String, dynamic>> forecast) {
+    final isDarkMode = ref.watch(themeModeProvider) == ThemeMode.dark;
     
-    if (data.temperature > 30) {
-      recommendations.add('High temperature - ensure adequate irrigation for crops');
-      recommendations.add('Consider shade nets for sensitive plants');
-    } else if (data.temperature < 15) {
-      recommendations.add('Cool weather - protect sensitive crops from cold');
-      recommendations.add('Good time for winter crop planting');
-    } else {
-      recommendations.add('Ideal temperature for most farming activities');
-    }
-    
-    if (data.humidity > 70) {
-      recommendations.add('High humidity - monitor for fungal diseases');
-      recommendations.add('Ensure good air circulation in greenhouse');
-    }
-    
-    if (data.windSpeed > 20) {
-      recommendations.add('High winds - secure loose structures and equipment');
-    }
-    
-    if (data.precipitation > 50) {
-      recommendations.add('Rain expected - postpone pesticide application');
-      recommendations.add('Good for water-hungry crops');
-    } else if (data.precipitation == 0 && data.humidity < 40) {
-      recommendations.add('Dry conditions - increase irrigation frequency');
-    }
-    
-    return recommendations;
-  }
-
-  void _showLocationDialog(BuildContext context, String languageCode) {
-    final TextEditingController controller = TextEditingController(
-      text: ref.read(locationProvider),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Current Weather Card
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isDarkMode
+                    ? [Colors.blue[900]!, Colors.purple[900]!]
+                    : [Colors.blue[400]!, Colors.purple[400]!],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          weather['location'] ?? 'Unknown Location',
+                          style: GoogleFonts.inter(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          weather['condition'] ?? 'Unknown',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Icon(
+                      _getWeatherIcon(weather['icon'] ?? '01d'),
+                      size: 64,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${(weather['temperature'] ?? 0).round()}°',
+                      style: GoogleFonts.inter(
+                        fontSize: 64,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        'C',
+                        style: GoogleFonts.inter(
+                          fontSize: 24,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  weather['description'] ?? 'No description',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    color: Colors.white70,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Weather Details
+          _buildWeatherDetails(weather),
+          
+          const SizedBox(height: 24),
+          
+          // 5-Day Forecast
+          if (forecast.isNotEmpty) _buildForecast(forecast),
+        ],
+      ),
     );
+  }
+
+  Widget _buildWeatherDetails(Map<String, dynamic> weather) {
+    final isDarkMode = ref.watch(themeModeProvider) == ThemeMode.dark;
     
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Change Location'),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            labelText: 'Enter city name',
-            border: OutlineInputBorder(),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey[800] : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('cancel'.tr(languageCode)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Weather Details',
+            style: GoogleFonts.inter(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: isDarkMode ? Colors.white : Colors.black87,
+            ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (_mounted) {
-                ref.read(locationProvider.notifier).state = controller.text;
-                Navigator.pop(context);
-                _loadWeatherData();
-              }
-            },
-            child: Text('update'.tr(languageCode)),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildDetailItem(
+                  'Humidity',
+                  '${weather['humidity'] ?? 0}%',
+                  Icons.water_drop,
+                  isDarkMode,
+                ),
+              ),
+              Expanded(
+                child: _buildDetailItem(
+                  'Wind Speed',
+                  '${(weather['windSpeed'] ?? 0).round()} km/h',
+                  Icons.air,
+                  isDarkMode,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildDetailItem(
+                  'Pressure',
+                  '${(weather['pressure'] ?? 0).round()} hPa',
+                  Icons.speed,
+                  isDarkMode,
+                ),
+              ),
+              Expanded(
+                child: _buildDetailItem(
+                  'UV Index',
+                  '${weather['uvIndex'] ?? 0}',
+                  Icons.wb_sunny,
+                  isDarkMode,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildDetailItem(String label, String value, IconData icon, bool isDarkMode) {
+    return Column(
+      children: [
+        Icon(
+          icon,
+          size: 24,
+          color: isDarkMode ? Colors.white70 : Colors.grey[600],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          ),
+        ),
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            color: isDarkMode ? Colors.white70 : Colors.grey[600],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildForecast(List<Map<String, dynamic>> forecast) {
+    final isDarkMode = ref.watch(themeModeProvider) == ThemeMode.dark;
+    
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey[800] : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '5-Day Forecast',
+            style: GoogleFonts.inter(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: isDarkMode ? Colors.white : Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...forecast.take(5).map((day) => _buildForecastItem(day, isDarkMode)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildForecastItem(Map<String, dynamic> day, bool isDarkMode) {
+    final date = day['date'] as DateTime;
+    final dayName = DateFormat('EEE').format(date);
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              dayName,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: isDarkMode ? Colors.white : Colors.black87,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Row(
+              children: [
+                Icon(
+                  _getWeatherIcon(day['icon'] ?? '01d'),
+                  size: 20,
+                  color: isDarkMode ? Colors.white70 : Colors.grey[600],
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  day['condition'] ?? 'Unknown',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: isDarkMode ? Colors.white70 : Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  '${(day['maxTemp'] ?? 0).round()}°',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isDarkMode ? Colors.white : Colors.black87,
+                  ),
+                ),
+                Text(
+                  '/${(day['minTemp'] ?? 0).round()}°',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: isDarkMode ? Colors.white70 : Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _getWeatherIcon(String icon) {
+    switch (icon) {
+      case '01d':
+      case '01n':
+        return Icons.wb_sunny;
+      case '02d':
+      case '02n':
+        return Icons.wb_cloudy;
+      case '03d':
+      case '03n':
+      case '04d':
+      case '04n':
+        return Icons.cloud;
+      case '09d':
+      case '09n':
+      case '10d':
+      case '10n':
+        return Icons.grain;
+      case '11d':
+      case '11n':
+        return Icons.flash_on;
+      case '13d':
+      case '13n':
+        return Icons.ac_unit;
+      case '50d':
+      case '50n':
+        return Icons.foggy;
+      default:
+        return Icons.wb_sunny;
+    }
   }
 }

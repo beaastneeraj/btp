@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'simple_dashboard.dart';
-import 'khatabook_screen.dart';
+import 'khatabook_analytics_screen.dart';
 import 'weather_screen.dart';
 import 'market_prices_screen.dart';
+import 'crop_planning_screen.dart';
+import 'fields_screen.dart';
+import 'tasks_screen.dart';
+import 'inventory_screen.dart';
+import 'reports_screen.dart';
 import 'profile_screen.dart';
 import '../providers/theme_provider.dart';
 import '../services/localization_service.dart';
@@ -45,10 +50,10 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
 
     final List<Widget> screens = [
       const SimpleDashboard(),
-      const KhatabookScreen(),
+      const KhatabookAnalyticsScreen(),
+      const CropPlanningScreen(),
       WeatherScreen(),
-      MarketPricesScreen(),
-      ProfileScreen(),
+      const ProfileScreen(),
     ];
 
     final List<NavigationDestination> destinations = [
@@ -58,19 +63,19 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
         label: 'dashboard'.tr(languageCode),
       ),
       NavigationDestination(
-        icon: const Icon(Icons.book_outlined),
-        selectedIcon: const Icon(Icons.book),
-        label: 'khatabook'.tr(languageCode),
+        icon: const Icon(Icons.analytics_outlined),
+        selectedIcon: const Icon(Icons.analytics),
+        label: 'analytics'.tr(languageCode),
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.eco_outlined),
+        selectedIcon: const Icon(Icons.eco),
+        label: 'planning'.tr(languageCode),
       ),
       NavigationDestination(
         icon: const Icon(Icons.cloud_outlined),
         selectedIcon: const Icon(Icons.cloud),
         label: 'weather'.tr(languageCode),
-      ),
-      NavigationDestination(
-        icon: const Icon(Icons.trending_up_outlined),
-        selectedIcon: const Icon(Icons.trending_up),
-        label: 'market'.tr(languageCode),
       ),
       NavigationDestination(
         icon: const Icon(Icons.person_outlined),

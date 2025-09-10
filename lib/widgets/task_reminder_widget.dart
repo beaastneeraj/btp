@@ -19,8 +19,7 @@ class TaskReminderWidget extends StatelessWidget {
       child: ListTile(
         leading: Icon(Icons.alarm, color: Colors.purple.shade700),
         title: Text('Task Reminder'),
-        subtitle: Text('$title
-Due: $dueDate'),
+        subtitle: Text('$title\nDue: $dueDate'),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Enums for different categories
 enum TransactionType { income, expense }
@@ -83,6 +84,42 @@ class Transaction {
       attachments: json['attachments']?.cast<String>(),
     );
   }
+
+  // Firebase Firestore serialization
+  Map<String, dynamic> toFirestore() {
+    return {
+      'type': type.name,
+      'amount': amount,
+      'description': description,
+      'date': Timestamp.fromDate(date),
+      'cropId': cropId,
+      'expenseCategory': expenseCategory?.name,
+      'incomeCategory': incomeCategory?.name,
+      'notes': notes,
+      'attachments': attachments,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+  }
+
+  factory Transaction.fromFirestore(Map<String, dynamic> data, String id) {
+    return Transaction(
+      id: id,
+      type: TransactionType.values.firstWhere((e) => e.name == data['type']),
+      amount: (data['amount'] as num).toDouble(),
+      description: data['description'] ?? '',
+      date: (data['date'] as Timestamp).toDate(),
+      cropId: data['cropId'],
+      expenseCategory: data['expenseCategory'] != null 
+          ? ExpenseCategory.values.firstWhere((e) => e.name == data['expenseCategory'])
+          : null,
+      incomeCategory: data['incomeCategory'] != null 
+          ? IncomeCategory.values.firstWhere((e) => e.name == data['incomeCategory'])
+          : null,
+      notes: data['notes'],
+      attachments: data['attachments']?.cast<String>(),
+    );
+  }
 }
 
 // Crop Model for tracking crop-specific data
@@ -144,6 +181,119 @@ class Crop {
       actualYield: json['actualYield']?.toDouble(),
       notes: json['notes'],
       photos: json['photos']?.cast<String>(),
+    );
+  }
+
+  // Firebase Firestore serialization
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'type': type.name,
+      'areaInAcres': areaInAcres,
+      'plantingDate': Timestamp.fromDate(plantingDate),
+      'harvestDate': harvestDate != null ? Timestamp.fromDate(harvestDate!) : null,
+      'variety': variety,
+      'expectedYield': expectedYield,
+      'actualYield': actualYield,
+      'notes': notes,
+      'photos': photos,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+  }
+
+  factory Crop.fromFirestore(Map<String, dynamic> data, String id) {
+    return Crop(
+      id: id,
+      name: data['name'] ?? '',
+      type: CropType.values.firstWhere((e) => e.name == data['type']),
+      areaInAcres: (data['areaInAcres'] as num).toDouble(),
+      plantingDate: (data['plantingDate'] as Timestamp).toDate(),
+      harvestDate: data['harvestDate'] != null 
+          ? (data['harvestDate'] as Timestamp).toDate()
+          : null,
+      variety: data['variety'] ?? '',
+      expectedYield: data['expectedYield']?.toDouble(),
+      actualYield: data['actualYield']?.toDouble(),
+      notes: data['notes'],
+      photos: data['photos']?.cast<String>(),
+    );
+  }
+}
+
+// Field Model for land management
+class Field {
+  final String id;
+  final String name;
+  final double areaInAcres;
+  final String location;
+  final String soilType;
+  final String? currentCrop;
+  final String? notes;
+  final List<String>? photos;
+
+  Field({
+    required this.id,
+    required this.name,
+    required this.areaInAcres,
+    required this.location,
+    required this.soilType,
+    this.currentCrop,
+    this.notes,
+    this.photos,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'areaInAcres': areaInAcres,
+      'location': location,
+      'soilType': soilType,
+      'currentCrop': currentCrop,
+      'notes': notes,
+      'photos': photos,
+    };
+  }
+
+  factory Field.fromJson(Map<String, dynamic> json) {
+    return Field(
+      id: json['id'],
+      name: json['name'],
+      areaInAcres: json['areaInAcres'].toDouble(),
+      location: json['location'],
+      soilType: json['soilType'],
+      currentCrop: json['currentCrop'],
+      notes: json['notes'],
+      photos: json['photos']?.cast<String>(),
+    );
+  }
+
+  // Firebase Firestore serialization
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'areaInAcres': areaInAcres,
+      'location': location,
+      'soilType': soilType,
+      'currentCrop': currentCrop,
+      'notes': notes,
+      'photos': photos,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+  }
+
+  factory Field.fromFirestore(Map<String, dynamic> data, String id) {
+    return Field(
+      id: id,
+      name: data['name'] ?? '',
+      areaInAcres: (data['areaInAcres'] as num).toDouble(),
+      location: data['location'] ?? '',
+      soilType: data['soilType'] ?? '',
+      currentCrop: data['currentCrop'],
+      notes: data['notes'],
+      photos: data['photos']?.cast<String>(),
     );
   }
 }

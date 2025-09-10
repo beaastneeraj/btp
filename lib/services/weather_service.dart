@@ -3,50 +3,15 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 
 class WeatherService {
-  static const String _apiKey = 'YOUR_OPENWEATHER_API_KEY'; // Replace with actual API key
+  static const String _apiKey = 'a8e71c9932b20c4ceb0aed183e6a83bb'; // OpenWeatherMap API key
   static const String _baseUrl = 'https://api.openweathermap.org/data/2.5';
-
-  // Get current weather by coordinates
-  Future<Map<String, dynamic>> getCurrentWeather(double lat, double lon) async {
-    try {
-      final url = '$_baseUrl/weather?lat=$lat&lon=$lon&appid=$_apiKey&units=metric';
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return _formatCurrentWeather(data);
-      } else {
-        throw Exception('Failed to fetch weather data');
-      }
-    } catch (e) {
-      // Return mock data if API fails
-      return _getMockCurrentWeather();
-    }
-  }
-
-  // Get weather forecast
-  Future<List<Map<String, dynamic>>> getWeatherForecast(double lat, double lon, {int days = 5}) async {
-    try {
-      final url = '$_baseUrl/forecast?lat=$lat&lon=$lon&appid=$_apiKey&units=metric&cnt=${days * 8}';
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return _formatForecast(data);
-      } else {
-        throw Exception('Failed to fetch forecast data');
-      }
-    } catch (e) {
-      // Return mock data if API fails
-      return _getMockForecast(days);
-    }
-  }
 
   // Get current location
   Future<Position> getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
 
+    // Check if location services are enabled
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       throw Exception('Location services are disabled.');
@@ -64,13 +29,29 @@ class WeatherService {
       throw Exception('Location permissions are permanently denied');
     }
 
-    return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+    return await Geolocator.getCurrentPosition();
   }
 
-  // Get weather by city name
-  Future<Map<String, dynamic>> getWeatherByCity(String cityName) async {
+  // Get current weather by coordinates
+  Future<Map<String, dynamic>> getCurrentWeather(double lat, double lon) async {
+    try {
+      final url = '$_baseUrl/weather?lat=$lat&lon=$lon&appid=$_apiKey&units=metric';
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return _formatCurrentWeather(data);
+      } else {
+        throw Exception('Failed to fetch weather data: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Return mock data if API fails
+      return _getMockCurrentWeather();
+    }
+  }
+
+  // Get current weather by city name
+  Future<Map<String, dynamic>> getCurrentWeatherByCity(String cityName) async {
     try {
       final url = '$_baseUrl/weather?q=$cityName&appid=$_apiKey&units=metric';
       final response = await http.get(Uri.parse(url));
@@ -79,296 +60,332 @@ class WeatherService {
         final data = json.decode(response.body);
         return _formatCurrentWeather(data);
       } else {
-        throw Exception('City not found');
+        throw Exception('Failed to fetch weather data for $cityName');
       }
     } catch (e) {
+      // Return mock data if API fails
       return _getMockCurrentWeather();
     }
   }
 
-  // Get agricultural weather advice
-  Map<String, String> getAgriculturalAdvice(Map<String, dynamic> weather) {
-    final temp = weather['temperature'] as double;
-    final humidity = weather['humidity'] as double;
-    final windSpeed = weather['windSpeed'] as double;
-    final condition = weather['condition'] as String;
-
-    Map<String, String> advice = {};
-
-    // Temperature advice
-    if (temp < 10) {
-      advice['temperature'] = 'Cold weather: Protect sensitive crops from frost. Consider covering or moving to shelter.';
-    } else if (temp > 35) {
-      advice['temperature'] = 'Hot weather: Increase watering frequency. Provide shade for sensitive plants.';
-    } else {
-      advice['temperature'] = 'Optimal temperature for most crops. Good growing conditions.';
-    }
-
-    // Humidity advice
-    if (humidity < 30) {
-      advice['humidity'] = 'Low humidity: Increase watering and consider mulching to retain soil moisture.';
-    } else if (humidity > 80) {
-      advice['humidity'] = 'High humidity: Watch for fungal diseases. Ensure good air circulation.';
-    } else {
-      advice['humidity'] = 'Good humidity levels for healthy plant growth.';
-    }
-
-    // Wind advice
-    if (windSpeed > 15) {
-      advice['wind'] = 'Strong winds: Secure tall plants and provide windbreaks for young crops.';
-    } else {
-      advice['wind'] = 'Gentle winds help with air circulation and plant health.';
-    }
-
-    // Condition-based advice
-    switch (condition.toLowerCase()) {
-      case 'rain':
-        advice['condition'] = 'Rainy weather: Good for soil moisture. Avoid fieldwork to prevent soil compaction.';
-        break;
-      case 'sunny':
-        advice['condition'] = 'Sunny weather: Perfect for photosynthesis. Monitor soil moisture levels.';
-        break;
-      case 'cloudy':
-        advice['condition'] = 'Cloudy weather: Reduced evaporation. Good for transplanting young plants.';
-        break;
-      case 'snow':
-        advice['condition'] = 'Snow: Provides insulation for soil. Protect greenhouse structures.';
-        break;
-      default:
-        advice['condition'] = 'Monitor weather conditions and adjust farming activities accordingly.';
-    }
-
-    return advice;
-  }
-
-  // Get farming tasks based on weather
-  List<String> getWeatherBasedTasks(Map<String, dynamic> weather) {
-    final temp = weather['temperature'] as double;
-    final condition = weather['condition'] as String;
-    final humidity = weather['humidity'] as double;
-
-    List<String> tasks = [];
-
-    if (condition.toLowerCase().contains('rain')) {
-      tasks.addAll([
-        'Check drainage systems',
-        'Inspect for pest issues after rain',
-        'Plan indoor maintenance tasks',
-      ]);
-    } else if (condition.toLowerCase().contains('sunny')) {
-      if (temp > 25) {
-        tasks.addAll([
-          'Water crops in early morning or evening',
-          'Check irrigation systems',
-          'Harvest mature crops',
-        ]);
-      } else {
-        tasks.addAll([
-          'Perfect day for fieldwork',
-          'Plant new crops',
-          'Apply fertilizers',
-        ]);
-      }
-    }
-
-    if (temp < 15) {
-      tasks.addAll([
-        'Check for frost damage',
-        'Cover sensitive plants',
-        'Prepare heating systems',
-      ]);
-    }
-
-    if (humidity > 80) {
-      tasks.addAll([
-        'Monitor for fungal diseases',
-        'Improve air circulation',
-        'Check stored produce',
-      ]);
-    }
-
-    return tasks;
-  }
-
-  // Format current weather data
-  Map<String, dynamic> _formatCurrentWeather(Map<String, dynamic> data) {
-    return {
-      'temperature': data['main']['temp'].toDouble(),
-      'feelsLike': data['main']['feels_like'].toDouble(),
-      'humidity': data['main']['humidity'].toDouble(),
-      'pressure': data['main']['pressure'].toDouble(),
-      'windSpeed': data['wind']['speed'].toDouble(),
-      'windDirection': data['wind']['deg'].toDouble(),
-      'visibility': (data['visibility'] / 1000).toDouble(), // Convert to km
-      'condition': data['weather'][0]['main'],
-      'description': data['weather'][0]['description'],
-      'icon': data['weather'][0]['icon'],
-      'cityName': data['name'],
-      'country': data['sys']['country'],
-      'sunrise': DateTime.fromMillisecondsSinceEpoch(data['sys']['sunrise'] * 1000),
-      'sunset': DateTime.fromMillisecondsSinceEpoch(data['sys']['sunset'] * 1000),
-      'timestamp': DateTime.now(),
-    };
-  }
-
-  // Format forecast data
-  List<Map<String, dynamic>> _formatForecast(Map<String, dynamic> data) {
-    final List<dynamic> list = data['list'];
-    return list.map((item) {
-      return {
-        'date': DateTime.fromMillisecondsSinceEpoch(item['dt'] * 1000),
-        'temperature': item['main']['temp'].toDouble(),
-        'minTemp': item['main']['temp_min'].toDouble(),
-        'maxTemp': item['main']['temp_max'].toDouble(),
-        'humidity': item['main']['humidity'].toDouble(),
-        'condition': item['weather'][0]['main'],
-        'description': item['weather'][0]['description'],
-        'icon': item['weather'][0]['icon'],
-        'windSpeed': item['wind']['speed'].toDouble(),
-        'precipitation': item['rain']?['3h']?.toDouble() ?? 0.0,
-      };
-    }).toList();
-  }
-
-  // Mock current weather data for development/offline use
-  Map<String, dynamic> _getMockCurrentWeather() {
-    return {
-      'temperature': 24.5,
-      'feelsLike': 26.2,
-      'humidity': 65.0,
-      'pressure': 1013.2,
-      'windSpeed': 8.5,
-      'windDirection': 180.0,
-      'visibility': 10.0,
-      'condition': 'Sunny',
-      'description': 'Clear sky',
-      'icon': '01d',
-      'cityName': 'Farm Location',
-      'country': 'IN',
-      'sunrise': DateTime.now().subtract(const Duration(hours: 2)),
-      'sunset': DateTime.now().add(const Duration(hours: 6)),
-      'timestamp': DateTime.now(),
-    };
-  }
-
-  // Mock forecast data
-  List<Map<String, dynamic>> _getMockForecast(int days) {
-    final List<Map<String, dynamic>> forecast = [];
-    final now = DateTime.now();
-
-    for (int i = 0; i < days * 4; i++) {
-      forecast.add({
-        'date': now.add(Duration(hours: i * 6)),
-        'temperature': 20.0 + (i % 10),
-        'minTemp': 18.0 + (i % 8),
-        'maxTemp': 25.0 + (i % 12),
-        'humidity': 60.0 + (i % 20),
-        'condition': ['Sunny', 'Cloudy', 'Rain'][i % 3],
-        'description': ['Clear sky', 'Few clouds', 'Light rain'][i % 3],
-        'icon': ['01d', '02d', '10d'][i % 3],
-        'windSpeed': 5.0 + (i % 10),
-        'precipitation': i % 3 == 2 ? 2.5 : 0.0,
-      });
-    }
-
-    return forecast;
-  }
-
-  // Get weather alerts
-  Future<List<Map<String, dynamic>>> getWeatherAlerts(double lat, double lon) async {
+  // Get weather forecast
+  Future<List<Map<String, dynamic>>> getWeatherForecast(double lat, double lon) async {
     try {
-      final url = '$_baseUrl/onecall?lat=$lat&lon=$lon&appid=$_apiKey&exclude=minutely,hourly';
+      final url = '$_baseUrl/forecast?lat=$lat&lon=$lon&appid=$_apiKey&units=metric';
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        if (data['alerts'] != null) {
-          return List<Map<String, dynamic>>.from(data['alerts']);
-        }
+        return _formatForecastData(data);
+      } else {
+        throw Exception('Failed to fetch forecast data: ${response.statusCode}');
       }
-      return [];
     } catch (e) {
-      return [];
+      // Return mock data if API fails
+      return _getMockForecastData();
     }
   }
 
-  // Calculate farming suitability index
-  double calculateFarmingSuitabilityIndex(Map<String, dynamic> weather) {
-    final temp = weather['temperature'] as double;
-    final humidity = weather['humidity'] as double;
-    final windSpeed = weather['windSpeed'] as double;
-    final condition = weather['condition'] as String;
+  // Get weather forecast by city
+  Future<List<Map<String, dynamic>>> getWeatherForecastByCity(String cityName) async {
+    try {
+      final url = '$_baseUrl/forecast?q=$cityName&appid=$_apiKey&units=metric';
+      final response = await http.get(Uri.parse(url));
 
-    double index = 0.0;
-
-    // Temperature scoring (optimal range: 15-30°C)
-    if (temp >= 15 && temp <= 30) {
-      index += 0.4;
-    } else if (temp > 10 && temp < 35) {
-      index += 0.2;
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return _formatForecastData(data);
+      } else {
+        throw Exception('Failed to fetch forecast data for $cityName');
+      }
+    } catch (e) {
+      // Return mock data if API fails
+      return _getMockForecastData();
     }
-
-    // Humidity scoring (optimal range: 40-70%)
-    if (humidity >= 40 && humidity <= 70) {
-      index += 0.3;
-    } else if (humidity > 30 && humidity < 80) {
-      index += 0.15;
-    }
-
-    // Wind scoring (optimal: < 15 m/s)
-    if (windSpeed < 10) {
-      index += 0.2;
-    } else if (windSpeed < 15) {
-      index += 0.1;
-    }
-
-    // Condition scoring
-    switch (condition.toLowerCase()) {
-      case 'sunny':
-      case 'clear':
-        index += 0.1;
-        break;
-      case 'cloudy':
-      case 'partly cloudy':
-        index += 0.08;
-        break;
-      case 'rain':
-        index += 0.05;
-        break;
-    }
-
-    return (index * 100).clamp(0.0, 100.0);
   }
-}
-          'location': data['name'],
-          'temperature': data['main']['temp'].toDouble(),
-          'condition': data['weather'][0]['main'],
-          'humidity': data['main']['humidity'],
-          'windSpeed': data['wind']['speed'].toDouble(),
-          'visibility': (data['visibility'] / 1000).toDouble(),
+
+  // Get agricultural weather advisory
+  Future<Map<String, dynamic>> getAgricultureAdvisory(double lat, double lon) async {
+    try {
+      // Get current weather and forecast
+      final currentWeather = await getCurrentWeather(lat, lon);
+      final forecast = await getWeatherForecast(lat, lon);
+
+      return {
+        'current': currentWeather,
+        'forecast': forecast.take(5).toList(),
+        'farmingRecommendations': _generateFarmingRecommendations(currentWeather, forecast),
+        'alerts': _generateWeatherAlerts(currentWeather, forecast),
+        'soilConditions': _analyzeSoilConditions(currentWeather, forecast),
+      };
+    } catch (e) {
+      return _getMockAgricultureAdvisory();
+    }
+  }
+
+  // Format current weather data
+  Map<String, dynamic> _formatCurrentWeather(Map<String, dynamic> data) {
+    final main = data['main'];
+    final weather = data['weather'][0];
+    final wind = data['wind'];
+    final sys = data['sys'];
+
+    return {
+      'location': '${data['name']}, ${sys['country']}',
+      'temperature': (main['temp'] as num).toDouble(),
+      'feelsLike': (main['feels_like'] as num).toDouble(),
+      'condition': weather['main'],
+      'description': weather['description'],
+      'humidity': main['humidity'],
+      'pressure': (main['pressure'] as num).toDouble(),
+      'windSpeed': (wind['speed'] as num).toDouble(),
+      'windDirection': wind['deg'] ?? 0,
+      'visibility': (data['visibility'] ?? 10000) / 1000, // Convert to km
+      'uvIndex': 5, // UV data requires separate API call
+      'icon': weather['icon'],
+      'sunrise': DateTime.fromMillisecondsSinceEpoch(sys['sunrise'] * 1000),
+      'sunset': DateTime.fromMillisecondsSinceEpoch(sys['sunset'] * 1000),
+      'precipitation': 0, // Current precipitation not available in free tier
+    };
+  }
+
+  // Format forecast data
+  List<Map<String, dynamic>> _formatForecastData(Map<String, dynamic> data) {
+    final List<dynamic> list = data['list'];
+    final Map<String, Map<String, dynamic>> dailyForecast = {};
+
+    for (final item in list) {
+      final DateTime date = DateTime.fromMillisecondsSinceEpoch(item['dt'] * 1000);
+      final String dateKey = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
+      final temp = (item['main']['temp'] as num).toDouble();
+      final weather = item['weather'][0];
+
+      if (!dailyForecast.containsKey(dateKey)) {
+        dailyForecast[dateKey] = {
+          'date': date,
+          'maxTemp': temp,
+          'minTemp': temp,
+          'condition': weather['main'],
+          'description': weather['description'],
+          'icon': weather['icon'],
+          'humidity': item['main']['humidity'],
+          'precipitation': (item['pop'] as num).toDouble() * 100, // Probability of precipitation
+          'windSpeed': (item['wind']['speed'] as num).toDouble(),
         };
       } else {
-        throw Exception('Failed to load weather data');
+        final existing = dailyForecast[dateKey]!;
+        existing['maxTemp'] = (existing['maxTemp'] as double).compareTo(temp) > 0 
+            ? existing['maxTemp'] 
+            : temp;
+        existing['minTemp'] = (existing['minTemp'] as double).compareTo(temp) < 0 
+            ? existing['minTemp'] 
+            : temp;
       }
-      */
-    } catch (e) {
-      throw Exception('Error fetching weather data: $e');
     }
+
+    return dailyForecast.values.toList()..sort((a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime));
   }
 
-  Future<List<Map<String, dynamic>>> getWeatherForecast(String location, int days) async {
-    try {
-      // For demo purposes, return mock forecast data
-      await Future.delayed(Duration(seconds: 1));
-      
-      return List.generate(days, (index) => {
-        'date': DateTime.now().add(Duration(days: index + 1)).toIso8601String(),
-        'temperature': 30.0 + (index % 5),
-        'condition': ['Sunny', 'Cloudy', 'Rainy'][index % 3],
-        'humidity': 60 + (index % 20),
-      });
-    } catch (e) {
-      throw Exception('Error fetching forecast data: $e');
+  // Generate farming recommendations based on weather
+  List<String> _generateFarmingRecommendations(Map<String, dynamic> current, List<Map<String, dynamic>> forecast) {
+    List<String> recommendations = [];
+    
+    final temp = current['temperature'] as double;
+    final humidity = current['humidity'] as int;
+    final windSpeed = current['windSpeed'] as double;
+
+    // Temperature-based recommendations
+    if (temp > 35) {
+      recommendations.add('Extreme heat warning: Provide shade for livestock and increase irrigation');
+      recommendations.add('Avoid heavy field work during midday hours');
+      recommendations.add('Monitor crops for heat stress and water requirements');
+    } else if (temp > 30) {
+      recommendations.add('High temperature: Ensure adequate irrigation for crops');
+      recommendations.add('Consider shade nets for sensitive plants');
+      recommendations.add('Early morning or evening work recommended');
+    } else if (temp < 10) {
+      recommendations.add('Cold weather: Protect sensitive crops from frost');
+      recommendations.add('Consider covering young plants overnight');
+      recommendations.add('Good time for winter crop preparation');
+    } else {
+      recommendations.add('Ideal temperature for most farming activities');
+      recommendations.add('Good conditions for planting and field work');
     }
+
+    // Humidity-based recommendations
+    if (humidity > 80) {
+      recommendations.add('High humidity: Monitor for fungal diseases');
+      recommendations.add('Ensure good air circulation in greenhouse');
+      recommendations.add('Delay fungicide application if possible');
+    } else if (humidity < 30) {
+      recommendations.add('Low humidity: Increase irrigation frequency');
+      recommendations.add('Consider misting for nursery plants');
+    }
+
+    // Wind-based recommendations
+    if (windSpeed > 15) {
+      recommendations.add('High winds: Secure loose structures and equipment');
+      recommendations.add('Postpone pesticide spraying');
+      recommendations.add('Check for crop damage after windy conditions');
+    }
+
+    // Check upcoming precipitation
+    final hasRainForecast = forecast.any((day) => (day['precipitation'] as double) > 50);
+    if (hasRainForecast) {
+      recommendations.add('Rain expected: Postpone pesticide and fertilizer application');
+      recommendations.add('Prepare drainage systems');
+      recommendations.add('Good opportunity for rain-fed crop planting');
+    } else {
+      recommendations.add('No significant rain expected: Plan irrigation schedule');
+      recommendations.add('Good conditions for field operations');
+    }
+
+    return recommendations;
+  }
+
+  // Generate weather alerts
+  List<Map<String, dynamic>> _generateWeatherAlerts(Map<String, dynamic> current, List<Map<String, dynamic>> forecast) {
+    List<Map<String, dynamic>> alerts = [];
+
+    final temp = current['temperature'] as double;
+    final windSpeed = current['windSpeed'] as double;
+
+    // Temperature alerts
+    if (temp > 40) {
+      alerts.add({
+        'type': 'extreme_heat',
+        'title': 'Extreme Heat Warning',
+        'description': 'Temperature above 40°C. Take immediate protective measures.',
+        'severity': 'high',
+        'icon': 'warning',
+      });
+    } else if (temp < 5) {
+      alerts.add({
+        'type': 'frost_warning',
+        'title': 'Frost Warning',
+        'description': 'Temperature below 5°C. Protect sensitive crops.',
+        'severity': 'medium',
+        'icon': 'ac_unit',
+      });
+    }
+
+    // Wind alerts
+    if (windSpeed > 20) {
+      alerts.add({
+        'type': 'high_wind',
+        'title': 'High Wind Alert',
+        'description': 'Wind speed above 20 km/h. Secure equipment and structures.',
+        'severity': 'medium',
+        'icon': 'air',
+      });
+    }
+
+    // Precipitation alerts
+    final heavyRainDays = forecast.where((day) => (day['precipitation'] as double) > 80).length;
+    if (heavyRainDays > 0) {
+      alerts.add({
+        'type': 'heavy_rain',
+        'title': 'Heavy Rain Expected',
+        'description': 'Heavy rainfall expected in the next few days. Prepare drainage.',
+        'severity': 'medium',
+        'icon': 'grain',
+      });
+    }
+
+    return alerts;
+  }
+
+  // Analyze soil conditions based on weather
+  Map<String, dynamic> _analyzeSoilConditions(Map<String, dynamic> current, List<Map<String, dynamic>> forecast) {
+    final temp = current['temperature'] as double;
+    final humidity = current['humidity'] as int;
+    
+    String soilMoisture;
+    String workability;
+    String recommendation;
+
+    // Estimate soil conditions
+    if (humidity > 70 && temp < 25) {
+      soilMoisture = 'High';
+      workability = 'Poor - Soil may be too wet';
+      recommendation = 'Wait for drier conditions before heavy machinery use';
+    } else if (humidity < 40 && temp > 30) {
+      soilMoisture = 'Low';
+      workability = 'Good - But soil may be hard';
+      recommendation = 'Consider irrigation before planting. Good for harvesting';
+    } else {
+      soilMoisture = 'Moderate';
+      workability = 'Good';
+      recommendation = 'Ideal conditions for most field operations';
+    }
+
+    return {
+      'moisture': soilMoisture,
+      'workability': workability,
+      'recommendation': recommendation,
+      'temperature': temp > 15 ? 'Favorable' : 'Cool',
+    };
+  }
+
+  // Mock data fallbacks
+  Map<String, dynamic> _getMockCurrentWeather() {
+    return {
+      'location': 'Delhi, IN',
+      'temperature': 28.5,
+      'feelsLike': 31.2,
+      'condition': 'Partly Cloudy',
+      'description': 'Perfect farming weather with good sunshine',
+      'humidity': 65,
+      'pressure': 1013.2,
+      'windSpeed': 12.5,
+      'windDirection': 180,
+      'visibility': 10.0,
+      'uvIndex': 7,
+      'icon': '02d',
+      'sunrise': DateTime.now().subtract(const Duration(hours: 2)),
+      'sunset': DateTime.now().add(const Duration(hours: 6)),
+      'precipitation': 0,
+    };
+  }
+
+  List<Map<String, dynamic>> _getMockForecastData() {
+    return List.generate(5, (index) {
+      final date = DateTime.now().add(Duration(days: index + 1));
+      final temps = [32, 29, 26, 30, 33];
+      final conditions = ['Sunny', 'Partly Cloudy', 'Light Rain', 'Cloudy', 'Sunny'];
+      final icons = ['01d', '02d', '10d', '03d', '01d'];
+      
+      return {
+        'date': date,
+        'maxTemp': temps[index].toDouble(),
+        'minTemp': (temps[index] - 10).toDouble(),
+        'condition': conditions[index],
+        'description': conditions[index],
+        'icon': icons[index],
+        'humidity': 60 + (index * 5),
+        'precipitation': index == 2 ? 75.0 : (index * 10).toDouble(),
+        'windSpeed': 10.0 + (index * 2),
+      };
+    });
+  }
+
+  Map<String, dynamic> _getMockAgricultureAdvisory() {
+    return {
+      'current': _getMockCurrentWeather(),
+      'forecast': _getMockForecastData(),
+      'farmingRecommendations': [
+        'Ideal temperature for most farming activities',
+        'Good conditions for planting and field work',
+        'Monitor irrigation requirements',
+      ],
+      'alerts': [],
+      'soilConditions': {
+        'moisture': 'Moderate',
+        'workability': 'Good',
+        'recommendation': 'Ideal conditions for most field operations',
+        'temperature': 'Favorable',
+      },
+    };
   }
 }

@@ -4,6 +4,7 @@ import '../screens/fields_screen.dart';
 import '../screens/cattle_screen.dart';
 import '../screens/irrigation_screen.dart';
 import '../screens/analytics_screen.dart';
+import '../screens/crop_planning_screen.dart';
 import '../themes/app_theme.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -22,6 +23,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     const CattleScreen(),
     const IrrigationScreen(),
     const AnalyticsScreen(),
+    const CropPlanningScreen(),
   ];
 
   final List<NavigationItem> _navigationItems = [
@@ -54,6 +56,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       activeIcon: Icons.analytics,
       label: 'Analytics',
       color: AppTheme.warningOrange,
+    ),
+    NavigationItem(
+      icon: Icons.eco_outlined,
+      activeIcon: Icons.eco,
+      label: 'Planning',
+      color: AppTheme.primaryGreen,
     ),
   ];
 
@@ -234,6 +242,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   onTap: _navigateToAddCattle,
                 ),
                 _QuickActionCard(
+                  icon: Icons.eco,
+                  label: 'Crop Plan',
+                  color: AppTheme.primaryGreen,
+                  onTap: _navigateToCropPlanning,
+                ),
+                _QuickActionCard(
                   icon: Icons.assignment,
                   label: 'Add Task',
                   color: AppTheme.warningOrange,
@@ -250,12 +264,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   label: 'Add Expense',
                   color: AppTheme.errorRed,
                   onTap: _navigateToAddExpense,
-                ),
-                _QuickActionCard(
-                  icon: Icons.water_drop,
-                  label: 'Irrigation',
-                  color: AppTheme.accentBlue,
-                  onTap: _navigateToAddIrrigation,
                 ),
               ],
             ),
@@ -274,6 +282,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   void _navigateToAddCattle() {
     Navigator.pop(context);
     // Navigate to add cattle screen
+  }
+
+  void _navigateToCropPlanning() {
+    Navigator.pop(context);
+    setState(() {
+      _currentIndex = 5; // Crop Planning screen index
+    });
   }
 
   void _navigateToAddTask() {

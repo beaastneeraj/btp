@@ -203,6 +203,10 @@ class _CattleScreenState extends State<CattleScreen> with TickerProviderStateMix
           'Add Animal',
           style: GoogleFonts.roboto(),
         ),
+      ),
+    );
+  }
+
   Widget _buildAnimalsTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),

@@ -3,8 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../providers/theme_provider.dart';
 import '../services/localization_service.dart';
-import 'main_navigation_screen.dart';
-import 'khatabook_screen.dart';
+import 'khatabook_analytics_screen.dart';
+import 'crop_planning_screen.dart';
+import 'weather_screen.dart';
+import 'market_prices_screen.dart';
+import 'fields_screen.dart';
+import 'tasks_screen.dart';
+import 'inventory_screen.dart';
+import 'reports_screen.dart';
+import 'profile_screen.dart';
 
 class SimpleDashboard extends ConsumerWidget {
   const SimpleDashboard({super.key});
@@ -40,7 +47,7 @@ class SimpleDashboard extends ConsumerWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
+                  builder: (context) => const ProfileScreen(),
                 ),
               );
             },
@@ -220,44 +227,147 @@ class SimpleDashboard extends ConsumerWidget {
               children: [
                 _buildActionCard(
                   context,
-                  'khatabook'.tr(languageCode),
-                  'Manage your farm finances',
-                  Icons.book,
+                  'Analytics',
+                  'View farm analytics',
+                  Icons.analytics,
                   colorScheme.primary,
                   () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const KhatabookScreen(),
+                        builder: (context) => const KhatabookAnalyticsScreen(),
                       ),
                     );
                   },
                 ),
                 _buildActionCard(
                   context,
-                  'weather'.tr(languageCode),
-                  'Check weather forecast',
-                  Icons.cloud,
+                  'Fields',
+                  'Manage your fields',
+                  Icons.agriculture,
                   colorScheme.secondary,
-                  () {},
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FieldsScreen(),
+                      ),
+                    );
+                  },
                 ),
                 _buildActionCard(
                   context,
-                  'market'.tr(languageCode),
-                  'View market prices',
-                  Icons.trending_up,
+                  'Tasks',
+                  'View and manage tasks',
+                  Icons.assignment,
                   colorScheme.tertiary,
-                  () {},
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TasksScreen(),
+                      ),
+                    );
+                  },
                 ),
                 _buildActionCard(
                   context,
                   'Crop Planning',
                   'Plan your next season',
-                  Icons.calendar_month,
+                  Icons.eco,
                   colorScheme.error,
-                  () {},
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CropPlanningScreen(),
+                      ),
+                    );
+                  },
                 ),
               ],
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // More Options
+            Text(
+              'More Options',
+              style: GoogleFonts.roboto(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 16),
+            
+            // Navigation List
+            Card(
+              elevation: 0,
+              color: colorScheme.surfaceContainerHigh,
+              child: Column(
+                children: [
+                  _buildNavigationItem(
+                    context,
+                    'Inventory',
+                    'Manage your inventory',
+                    Icons.inventory,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InventoryScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildNavigationItem(
+                    context,
+                    'Weather',
+                    'Check weather forecast',
+                    Icons.cloud,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WeatherScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildNavigationItem(
+                    context,
+                    'Market Prices',
+                    'View current market prices',
+                    Icons.trending_up,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MarketPricesScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildNavigationItem(
+                    context,
+                    'Reports',
+                    'Generate and view reports',
+                    Icons.assessment,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReportsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
             
             const SizedBox(height: 24),
@@ -495,6 +605,48 @@ class SimpleDashboard extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildNavigationItem(
+    BuildContext context,
+    String title,
+    String subtitle,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: colorScheme.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: colorScheme.primary, size: 20),
+      ),
+      title: Text(
+        title,
+        style: GoogleFonts.roboto(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: colorScheme.onSurface,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: GoogleFonts.roboto(
+          fontSize: 12,
+          color: colorScheme.onSurface.withOpacity(0.6),
+        ),
+      ),
+      trailing: Icon(
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: colorScheme.onSurface.withOpacity(0.4),
+      ),
+      onTap: onTap,
     );
   }
 }

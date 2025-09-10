@@ -608,7 +608,7 @@ enum FertilizerType {
   ammoniumChloride,
   // Phosphatic Fertilizers
   singleSuperPhosphate,
-  tripleSuper
+  tripleSuper,
   diammoniumPhosphate,
   monoammoniumPhosphate,
   // Potassic Fertilizers

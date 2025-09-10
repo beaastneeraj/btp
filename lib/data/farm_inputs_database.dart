@@ -3,8 +3,8 @@ import '../models/indian_agriculture_models.dart';
 
 /// Comprehensive Farm Instruments Database for India
 class FarmInstrumentsDatabase {
-  static const Map<String, FarmInstrumentDetail> instruments = {
-    'tractor_mahindra_575': FarmInstrumentDetail(
+  static final Map<String, FarmInstrumentDetail> instruments = {
+        'tractor_mahindra_575': FarmInstrumentDetail(
       id: 'tractor_mahindra_575',
       type: FarmInstrument.tractor,
       name: 'Mahindra 575 DI Tractor',
@@ -380,7 +380,7 @@ class FarmInstrumentsDatabase {
 
 /// Fertilizer Database for India
 class FertilizerDatabase {
-  static const Map<String, FertilizerDetail> fertilizers = {
+  static final Map<String, FertilizerDetail> fertilizers = {
     'urea_iffco': FertilizerDetail(
       id: 'urea_iffco',
       type: FertilizerType.urea,
@@ -662,7 +662,7 @@ class FertilizerDatabase {
 
 /// Seeds Database
 class SeedDatabase {
-  static const Map<String, SeedDetail> seeds = {
+  static final Map<String, SeedDetail> seeds = {
     'wheat_hd3086': SeedDetail(
       id: 'wheat_hd3086',
       type: SeedType.hybrid,
