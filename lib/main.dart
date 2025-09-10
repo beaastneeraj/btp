@@ -10,6 +10,8 @@ import 'screens/crop_planning_screen.dart';
 import 'screens/weather_screen.dart';
 import 'screens/khatabook_analytics_screen.dart';
 import 'screens/reports_screen.dart';
+import 'screens/crop_recommendation_screen.dart';
+import 'screens/market_price_screen.dart';
 import 'providers/theme_provider.dart';
 import 'services/localization_service.dart';
 
@@ -274,12 +276,13 @@ class IndianFarmingApp extends ConsumerWidget {
             // Add localizations delegates here if needed
           ],
           routes: {
-            '/': (context) => const SplashScreen(),
             '/main': (context) => const MainNavigationScreen(),
             '/inventory': (context) => const InventoryScreen(),
             '/fields': (context) => const FieldsScreen(),
             '/crops': (context) => const CropPlanningScreen(),
             '/weather': (context) => WeatherScreen(),
+            '/crop-recommendation': (context) => const CropRecommendationScreen(),
+            '/market-prices': (context) => const MarketPriceScreen(),
             '/expenses': (context) => const KhatabookAnalyticsScreen(),
             '/reports': (context) => const ReportsScreen(),
           },

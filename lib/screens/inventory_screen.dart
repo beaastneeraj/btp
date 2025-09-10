@@ -1,43 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/services.dart';
+import '../widgets/animated_widgets.dart';
+import '../providers/theme_provider.dart';
 
 // Inventory Item Model
 class InventoryItem {
   final String id;
   final String name;
   final String category;
-  final int quantity;
-  final int minQuantity;
-  final double price;
+  final double quantity;
   final String unit;
+  final double minThreshold;
   final DateTime lastUpdated;
   final String? description;
   final String? imageUrl;
-  final bool isLowStock;
 
   InventoryItem({
     required this.id,
     required this.name,
     required this.category,
     required this.quantity,
-    required this.minQuantity,
-    required this.price,
     required this.unit,
+    required this.minThreshold,
     required this.lastUpdated,
     this.description,
     this.imageUrl,
-  }) : isLowStock = quantity <= minQuantity;
+  });
+
+  bool get isLowStock => quantity <= minThreshold;
 
   InventoryItem copyWith({
     String? id,
     String? name,
     String? category,
-    int? quantity,
-    int? minQuantity,
-    double? price,
+    double? quantity,
     String? unit,
+    double? minThreshold,
     DateTime? lastUpdated,
     String? description,
     String? imageUrl,
@@ -47,9 +47,8 @@ class InventoryItem {
       name: name ?? this.name,
       category: category ?? this.category,
       quantity: quantity ?? this.quantity,
-      minQuantity: minQuantity ?? this.minQuantity,
-      price: price ?? this.price,
       unit: unit ?? this.unit,
+      minThreshold: minThreshold ?? this.minThreshold,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,
@@ -61,58 +60,53 @@ class InventoryItem {
 final inventoryItemsProvider = StateProvider<List<InventoryItem>>((ref) => [
   InventoryItem(
     id: '1',
-    name: 'Wheat Seeds',
-    category: 'Seeds',
-    quantity: 150,
-    minQuantity: 50,
-    price: 25.0,
+    name: 'Fertilizer NPK',
+    category: 'Fertilizers',
+    quantity: 25.5,
     unit: 'kg',
+    minThreshold: 10.0,
     lastUpdated: DateTime.now().subtract(const Duration(days: 2)),
-    description: 'High-quality wheat seeds for spring planting',
+    description: 'High-quality nitrogen, phosphorus, potassium fertilizer',
   ),
   InventoryItem(
     id: '2',
-    name: 'NPK Fertilizer',
-    category: 'Fertilizers',
-    quantity: 30,
-    minQuantity: 20,
-    price: 120.0,
-    unit: 'bags',
+    name: 'Wheat Seeds',
+    category: 'Seeds',
+    quantity: 8.0,
+    unit: 'kg',
+    minThreshold: 15.0,
     lastUpdated: DateTime.now().subtract(const Duration(days: 1)),
-    description: 'Complete NPK fertilizer for crop nutrition',
+    description: 'Premium quality wheat seeds for planting',
   ),
   InventoryItem(
     id: '3',
     name: 'Pesticide Spray',
     category: 'Pesticides',
-    quantity: 8,
-    minQuantity: 15,
-    price: 45.0,
-    unit: 'bottles',
-    lastUpdated: DateTime.now(),
-    description: 'Organic pesticide for pest control',
+    quantity: 3.5,
+    unit: 'liters',
+    minThreshold: 5.0,
+    lastUpdated: DateTime.now().subtract(const Duration(hours: 12)),
+    description: 'Organic pesticide for crop protection',
   ),
   InventoryItem(
     id: '4',
     name: 'Irrigation Pipes',
     category: 'Equipment',
-    quantity: 25,
-    minQuantity: 10,
-    price: 85.0,
+    quantity: 45.0,
     unit: 'meters',
-    lastUpdated: DateTime.now().subtract(const Duration(hours: 6)),
+    minThreshold: 20.0,
+    lastUpdated: DateTime.now().subtract(const Duration(days: 5)),
     description: 'PVC pipes for irrigation system',
   ),
   InventoryItem(
     id: '5',
-    name: 'Corn Seeds',
+    name: 'Tomato Seeds',
     category: 'Seeds',
-    quantity: 5,
-    minQuantity: 20,
-    price: 35.0,
+    quantity: 2.2,
     unit: 'kg',
+    minThreshold: 3.0,
     lastUpdated: DateTime.now().subtract(const Duration(days: 3)),
-    description: 'Hybrid corn seeds for summer crop',
+    description: 'Hybrid tomato seeds for greenhouse cultivation',
   ),
 ]);
 
@@ -132,8 +126,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
   late AnimationController _animationController;
   late AnimationController _fabAnimationController;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
   late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -142,23 +136,35 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
+
     _fabAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+    ));
 
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
+      begin: const Offset(0, 0.5),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack));
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.2, 0.8, curve: Curves.elasticOut),
+    ));
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.4, 1.0, curve: Curves.elasticOut),
+    ));
 
     _animationController.forward();
     _fabAnimationController.forward();
@@ -170,37 +176,54 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
     _fabAnimationController.dispose();
     super.dispose();
   }
-    final colorScheme = Theme.of(context).colorScheme;
+
+  int _getCrossAxisCount(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth > 1200) return 4;
+    if (screenWidth > 800) return 3;
+    if (screenWidth > 600) return 2;
+    return 1;
+  }
+
+  List<InventoryItem> _getFilteredItems() {
     final inventoryItems = ref.watch(inventoryItemsProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
     final searchQuery = ref.watch(searchQueryProvider);
     final sortBy = ref.watch(sortByProvider);
 
-    // Filter and sort items
     List<InventoryItem> filteredItems = inventoryItems.where((item) {
       final matchesCategory = selectedCategory == 'All' || item.category == selectedCategory;
       final matchesSearch = searchQuery.isEmpty || 
           item.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
           item.category.toLowerCase().contains(searchQuery.toLowerCase());
+      
       return matchesCategory && matchesSearch;
     }).toList();
 
     // Sort items
-    filteredItems.sort((a, b) {
-      switch (sortBy) {
-        case 'name':
-          return a.name.compareTo(b.name);
-        case 'quantity':
-          return b.quantity.compareTo(a.quantity);
-        case 'category':
-          return a.category.compareTo(b.category);
-        case 'lowStock':
-          return a.isLowStock == b.isLowStock ? 0 : (a.isLowStock ? -1 : 1);
-        default:
-          return 0;
-      }
-    });
+    switch (sortBy) {
+      case 'name':
+        filteredItems.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      case 'quantity':
+        filteredItems.sort((a, b) => b.quantity.compareTo(a.quantity));
+        break;
+      case 'category':
+        filteredItems.sort((a, b) => a.category.compareTo(b.category));
+        break;
+      case 'lowStock':
+        filteredItems.sort((a, b) => a.isLowStock ? -1 : 1);
+        break;
+    }
 
+    return filteredItems;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final inventoryItems = ref.watch(inventoryItemsProvider);
+    final filteredItems = _getFilteredItems();
     final categories = ['All', ...inventoryItems.map((e) => e.category).toSet().toList()];
     final lowStockCount = inventoryItems.where((item) => item.isLowStock).length;
 
@@ -212,14 +235,12 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           position: _slideAnimation,
           child: CustomScrollView(
             slivers: [
-              // Animated App Bar
+              // App Bar with gradient
               SliverAppBar(
-                expandedHeight: 120.0,
+                expandedHeight: 120,
                 floating: false,
                 pinned: true,
                 backgroundColor: colorScheme.surface,
-                elevation: 0,
-                surfaceTintColor: Colors.transparent,
                 flexibleSpace: FlexibleSpaceBar(
                   title: ScaleTransition(
                     scale: _scaleAnimation,
@@ -230,8 +251,6 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [colorScheme.primary, colorScheme.secondary],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
                             ),
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
@@ -243,7 +262,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                             ],
                           ),
                           child: Icon(
-                            Icons.inventory_2_rounded,
+                            Icons.inventory_2,
                             color: colorScheme.onPrimary,
                             size: 24,
                           ),
@@ -254,7 +273,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                             'Smart Inventory',
                             style: GoogleFonts.roboto(
                               fontSize: 20,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.bold,
                               color: colorScheme.onSurface,
                             ),
                           ),
@@ -279,7 +298,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.warning_rounded,
+                              Icons.warning,
                               color: Colors.orange,
                               size: 16,
                             ),
@@ -287,9 +306,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                             Text(
                               '$lowStockCount Low',
                               style: GoogleFonts.roboto(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
                                 color: Colors.orange,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
                               ),
                             ),
                           ],
@@ -299,47 +318,49 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                 ],
               ),
 
-              // Search and Filter Section
+              // Search and Filters
               SliverToBoxAdapter(
                 child: ScaleTransition(
                   scale: _scaleAnimation,
                   child: Container(
+                    margin: const EdgeInsets.all(16),
                     padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceVariant.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: colorScheme.outline.withOpacity(0.2),
+                      ),
+                    ),
                     child: Column(
                       children: [
                         // Search Bar
                         Container(
                           decoration: BoxDecoration(
-                            color: colorScheme.surfaceVariant.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: colorScheme.outline.withOpacity(0.2),
-                            ),
+                            color: colorScheme.surface,
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: TextField(
                             onChanged: (value) {
                               ref.read(searchQueryProvider.notifier).state = value;
                             },
                             decoration: InputDecoration(
-                              hintText: 'Search inventory items...',
+                              hintText: 'Search inventory...',
                               hintStyle: GoogleFonts.roboto(
                                 color: colorScheme.onSurface.withOpacity(0.6),
                               ),
                               prefixIcon: Icon(
-                                Icons.search_rounded,
+                                Icons.search,
                                 color: colorScheme.primary,
                               ),
                               border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             ),
                           ),
                         ),
                         const SizedBox(height: 16),
 
-                        // Category Chips
+                        // Category Filter
                         SizedBox(
                           height: 40,
                           child: ListView.builder(
@@ -347,22 +368,22 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                             itemCount: categories.length,
                             itemBuilder: (context, index) {
                               final category = categories[index];
-                              final isSelected = selectedCategory == category;
+                              final isSelected = ref.watch(selectedCategoryProvider) == category;
                               
                               return AnimatedContainer(
                                 duration: const Duration(milliseconds: 300),
                                 margin: const EdgeInsets.only(right: 8),
                                 child: FilterChip(
-                                  selected: isSelected,
                                   label: Text(
                                     category,
                                     style: GoogleFonts.roboto(
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w500,
                                       color: isSelected
                                           ? colorScheme.onPrimary
                                           : colorScheme.onSurface,
                                     ),
                                   ),
+                                  selected: isSelected,
                                   backgroundColor: colorScheme.surfaceVariant,
                                   selectedColor: colorScheme.primary,
                                   onSelected: (selected) {
@@ -382,7 +403,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                         Row(
                           children: [
                             Icon(
-                              Icons.sort_rounded,
+                              Icons.sort,
                               color: colorScheme.primary,
                               size: 20,
                             ),
@@ -394,7 +415,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                                 color: colorScheme.onSurface,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            const SizedBox(width: 8),
                             Expanded(
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
@@ -418,13 +439,13 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
 
               // Inventory Grid
               SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(16),
                 sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: _getCrossAxisCount(context),
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
                     childAspectRatio: 0.8,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
@@ -438,11 +459,6 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                   ),
                 ),
               ),
-
-              // Bottom spacing
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 100),
-              ),
             ],
           ),
         ),
@@ -454,7 +470,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
           elevation: 8,
-          icon: const Icon(Icons.add_rounded),
+          icon: const Icon(Icons.add),
           label: Text(
             'Add Item',
             style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
@@ -463,912 +479,441 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
       ),
     );
   }
-              ),
-              textAlign: TextAlign.center,
-            ),
-            }
 
   Widget _buildSortChip(String value, String label, IconData icon) {
     final colorScheme = Theme.of(context).colorScheme;
     final sortBy = ref.watch(sortByProvider);
     final isSelected = sortBy == value;
 
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        child: InkWell(
-          onTap: () {
-            ref.read(sortByProvider.notifier).state = value;
-            HapticFeedback.lightImpact();
-          },
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: isSelected ? colorScheme.primary : colorScheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isSelected ? colorScheme.primary : colorScheme.outline.withOpacity(0.3),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
-                  size: 16,
-                  color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  label,
-                  style: GoogleFonts.roboto(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: FilterChip(
+        avatar: Icon(
+          icon,
+          size: 16,
+          color: isSelected ? colorScheme.onPrimary : colorScheme.primary,
+        ),
+        label: Text(
+          label,
+          style: GoogleFonts.roboto(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
           ),
         ),
+        selected: isSelected,
+        backgroundColor: colorScheme.surfaceVariant,
+        selectedColor: colorScheme.primary,
+        onSelected: (selected) {
+          if (selected) {
+            ref.read(sortByProvider.notifier).state = value;
+            HapticFeedback.lightImpact();
+          }
+        },
       ),
     );
   }
 
   Widget _buildInventoryCard(InventoryItem item, ColorScheme colorScheme) {
-    return TweenAnimationBuilder<double>(
-      duration: const Duration(milliseconds: 300),
-      tween: Tween(begin: 0.0, end: 1.0),
-      builder: (context, value, child) {
-        return Transform.scale(
-          scale: 0.8 + (0.2 * value),
-          child: Opacity(
-            opacity: value,
-            child: Hero(
-              tag: 'inventory_${item.id}',
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      colorScheme.surface,
-                      colorScheme.surfaceVariant.withOpacity(0.5),
-                    ],
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: item.isLowStock ? Colors.orange : colorScheme.outline.withOpacity(0.2),
+          width: item.isLowStock ? 2 : 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.shadow.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => _showItemDetails(item),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with category
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        item.category,
+                        style: GoogleFonts.roboto(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    if (item.isLowStock)
+                      Icon(
+                        Icons.warning,
+                        color: Colors.orange,
+                        size: 16,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Item name
+                Text(
+                  item.name,
+                  style: GoogleFonts.roboto(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
                   ),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: item.isLowStock 
-                        ? Colors.orange.withOpacity(0.5)
-                        : colorScheme.outline.withOpacity(0.2),
-                    width: item.isLowStock ? 2 : 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: item.isLowStock 
-                          ? Colors.orange.withOpacity(0.2)
-                          : colorScheme.shadow.withOpacity(0.1),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+
+                // Quantity
+                Row(
+                  children: [
+                    Icon(
+                      Icons.inventory,
+                      color: colorScheme.primary,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${item.quantity} ${item.unit}',
+                      style: GoogleFonts.roboto(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: item.isLowStock ? Colors.orange : colorScheme.onSurface,
+                      ),
                     ),
                   ],
                 ),
-                child: InkWell(
-                  onTap: () => _showItemDetails(item),
-                  borderRadius: BorderRadius.circular(20),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header with category and status
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: _getCategoryColor(item.category).withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                item.category,
-                                style: GoogleFonts.roboto(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: _getCategoryColor(item.category),
-                                ),
-                              ),
-                            ),
-                            if (item.isLowStock)
-                              Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Icon(
-                                  Icons.warning_rounded,
-                                  size: 12,
-                                  color: Colors.orange,
-                                ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
+                const SizedBox(height: 4),
 
-                        // Item icon
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                _getCategoryColor(item.category),
-                                _getCategoryColor(item.category).withOpacity(0.7),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: _getCategoryColor(item.category).withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            _getCategoryIcon(item.category),
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Item name
-                        Text(
-                          item.name,
-                          style: GoogleFonts.roboto(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: colorScheme.onSurface,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Quantity with progress indicator
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${item.quantity} ${item.unit}',
-                                    style: GoogleFonts.roboto(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                      color: item.isLowStock ? Colors.orange : colorScheme.primary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  LinearProgressIndicator(
-                                    value: (item.quantity / (item.minQuantity * 2)).clamp(0.0, 1.0),
-                                    backgroundColor: colorScheme.surfaceVariant,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      item.isLowStock ? Colors.orange : colorScheme.primary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-
-                        // Price and actions
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '₹${item.price.toStringAsFixed(0)}',
-                              style: GoogleFonts.roboto(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurface.withOpacity(0.7),
-                              ),
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _buildActionButton(
-                                  Icons.remove_rounded,
-                                  () => _updateQuantity(item, -1),
-                                  colorScheme.error,
-                                ),
-                                const SizedBox(width: 8),
-                                _buildActionButton(
-                                  Icons.add_rounded,
-                                  () => _updateQuantity(item, 1),
-                                  colorScheme.primary,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                // Threshold
+                Text(
+                  'Min: ${item.minThreshold} ${item.unit}',
+                  style: GoogleFonts.roboto(
+                    fontSize: 12,
+                    color: colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
-              ),
+                const Spacer(),
+
+                // Action buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _showEditDialog(item),
+                        icon: const Icon(Icons.edit, size: 16),
+                        label: Text(
+                          'Edit',
+                          style: GoogleFonts.roboto(fontSize: 12),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildActionButton(IconData icon, VoidCallback onPressed, Color color) {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: InkWell(
-        onTap: () {
-          onPressed();
-          HapticFeedback.lightImpact();
-        },
-        borderRadius: BorderRadius.circular(8),
-        child: Icon(icon, size: 16, color: color),
+        ),
       ),
     );
   }
 
-  int _getCrossAxisCount(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width > 1200) return 4;
-    if (width > 800) return 3;
-    if (width > 600) return 2;
-    return 2;
+  void _showItemDetails(InventoryItem item) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(item.name),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Category: ${item.category}'),
+            Text('Quantity: ${item.quantity} ${item.unit}'),
+            Text('Min Threshold: ${item.minThreshold} ${item.unit}'),
+            if (item.description != null)
+              Text('Description: ${item.description}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 
-  Color _getCategoryColor(String category) {
-    switch (category.toLowerCase()) {
-      case 'seeds':
-        return Colors.green;
-      case 'fertilizers':
-        return Colors.brown;
-      case 'pesticides':
-        return Colors.red;
-      case 'equipment':
-        return Colors.blue;
-      case 'tools':
-        return Colors.orange;
-      default:
-        return Colors.purple;
-    }
+  void _showEditDialog(InventoryItem item) {
+    final quantityController = TextEditingController(text: item.quantity.toString());
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Edit ${item.name}'),
+        content: TextField(
+          controller: quantityController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            labelText: 'Quantity (${item.unit})',
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final newQuantity = double.tryParse(quantityController.text);
+              if (newQuantity != null) {
+                _updateItemQuantity(item, newQuantity);
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Update'),
+          ),
+        ],
+      ),
+    );
   }
 
-  IconData _getCategoryIcon(String category) {
-    switch (category.toLowerCase()) {
-      case 'seeds':
-        return Icons.eco_rounded;
-      case 'fertilizers':
-        return Icons.grass_rounded;
-      case 'pesticides':
-        return Icons.bug_report_rounded;
-      case 'equipment':
-        return Icons.build_rounded;
-      case 'tools':
-        return Icons.construction_rounded;
-      default:
-        return Icons.inventory_2_rounded;
-    }
-  }
-
-  void _updateQuantity(InventoryItem item, int change) {
+  void _updateItemQuantity(InventoryItem item, double newQuantity) {
     final inventoryItems = ref.read(inventoryItemsProvider);
-    final updatedItems = inventoryItems.map((inventoryItem) {
-      if (inventoryItem.id == item.id) {
-        final newQuantity = (inventoryItem.quantity + change).clamp(0, 99999);
-        return inventoryItem.copyWith(
+    final updatedItems = inventoryItems.map((i) {
+      if (i.id == item.id) {
+        return i.copyWith(
           quantity: newQuantity,
           lastUpdated: DateTime.now(),
         );
       }
-      return inventoryItem;
+      return i;
     }).toList();
     
     ref.read(inventoryItemsProvider.notifier).state = updatedItems;
   }
 
-  void _showItemDetails(InventoryItem item) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _ItemDetailsSheet(item: item),
-    );
-  }
-
   void _showAddItemDialog(BuildContext context) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const _AddItemSheet(),
+      builder: (context) => const AddItemDialog(),
     );
   }
 }
 
-class _ItemDetailsSheet extends ConsumerWidget {
-  final InventoryItem item;
-
-  const _ItemDetailsSheet({required this.item});
+class AddItemDialog extends StatefulWidget {
+  const AddItemDialog({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
-    return Container(
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.shadow.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        _getCategoryColor(item.category),
-                        _getCategoryColor(item.category).withOpacity(0.7),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: _getCategoryColor(item.category).withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    _getCategoryIcon(item.category),
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.name,
-                        style: GoogleFonts.roboto(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: colorScheme.onSurface,
-                        ),
-                      ),
-                      Text(
-                        item.category,
-                        style: GoogleFonts.roboto(
-                          fontSize: 14,
-                          color: colorScheme.onSurface.withOpacity(0.6),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            // Details Grid
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDetailCard(
-                    'Quantity',
-                    '${item.quantity} ${item.unit}',
-                    Icons.numbers_rounded,
-                    item.isLowStock ? Colors.orange : colorScheme.primary,
-                    colorScheme,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildDetailCard(
-                    'Price',
-                    '₹${item.price.toStringAsFixed(0)}',
-                    Icons.currency_rupee_rounded,
-                    colorScheme.secondary,
-                    colorScheme,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDetailCard(
-                    'Min. Stock',
-                    '${item.minQuantity} ${item.unit}',
-                    Icons.warning_rounded,
-                    Colors.orange,
-                    colorScheme,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildDetailCard(
-                    'Updated',
-                    _formatDate(item.lastUpdated),
-                    Icons.schedule_rounded,
-                    colorScheme.tertiary,
-                    colorScheme,
-                  ),
-                ),
-              ],
-            ),
-
-            if (item.description != null) ...[
-              const SizedBox(height: 24),
-              Text(
-                'Description',
-                style: GoogleFonts.roboto(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                item.description!,
-                style: GoogleFonts.roboto(
-                  fontSize: 14,
-                  color: colorScheme.onSurface.withOpacity(0.7),
-                ),
-              ),
-            ],
-
-            const SizedBox(height: 24),
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.edit_rounded),
-                    label: const Text('Edit'),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close_rounded),
-                    label: const Text('Close'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailCard(String title, String value, IconData icon, Color color, ColorScheme colorScheme) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: GoogleFonts.roboto(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          Text(
-            title,
-            style: GoogleFonts.roboto(
-              fontSize: 12,
-              color: colorScheme.onSurface.withOpacity(0.6),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _getCategoryColor(String category) {
-    switch (category.toLowerCase()) {
-      case 'seeds':
-        return Colors.green;
-      case 'fertilizers':
-        return Colors.brown;
-      case 'pesticides':
-        return Colors.red;
-      case 'equipment':
-        return Colors.blue;
-      case 'tools':
-        return Colors.orange;
-      default:
-        return Colors.purple;
-    }
-  }
-
-  IconData _getCategoryIcon(String category) {
-    switch (category.toLowerCase()) {
-      case 'seeds':
-        return Icons.eco_rounded;
-      case 'fertilizers':
-        return Icons.grass_rounded;
-      case 'pesticides':
-        return Icons.bug_report_rounded;
-      case 'equipment':
-        return Icons.build_rounded;
-      case 'tools':
-        return Icons.construction_rounded;
-      default:
-        return Icons.inventory_2_rounded;
-    }
-  }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-    
-    if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
-    } else {
-      return 'Just now';
-    }
-  }
+  State<AddItemDialog> createState() => _AddItemDialogState();
 }
 
-class _AddItemSheet extends ConsumerStatefulWidget {
-  const _AddItemSheet();
-
-  @override
-  ConsumerState<_AddItemSheet> createState() => _AddItemSheetState();
-}
-
-class _AddItemSheetState extends ConsumerState<_AddItemSheet> {
+class _AddItemDialogState extends State<AddItemDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _quantityController = TextEditingController();
-  final _minQuantityController = TextEditingController();
-  final _priceController = TextEditingController();
   final _unitController = TextEditingController();
+  final _thresholdController = TextEditingController();
   final _descriptionController = TextEditingController();
   String _selectedCategory = 'Seeds';
 
-  final List<String> _categories = ['Seeds', 'Fertilizers', 'Pesticides', 'Equipment', 'Tools'];
-  final List<String> _units = ['kg', 'bags', 'bottles', 'meters', 'pieces', 'liters'];
+  final List<String> _categories = [
+    'Seeds',
+    'Fertilizers',
+    'Pesticides',
+    'Equipment',
+    'Tools',
+    'Other',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
-    return Container(
-      margin: const EdgeInsets.all(16),
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-      ),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.shadow.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 24,
-          right: 24,
-          top: 24,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-        ),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Row(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [colorScheme.primary, colorScheme.secondary],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        Icons.add_rounded,
-                        color: colorScheme.onPrimary,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Text(
-                      'Add New Item',
-                      style: GoogleFonts.roboto(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                  ],
+    return AlertDialog(
+      title: const Text('Add New Item'),
+      content: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Item Name',
+                  border: OutlineInputBorder(),
                 ),
-                const SizedBox(height: 24),
-
-                // Form Fields
-                _buildTextField(
-                  controller: _nameController,
-                  label: 'Item Name',
-                  icon: Icons.inventory_2_rounded,
-                  validator: (value) => value?.isEmpty == true ? 'Required' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter item name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                decoration: const InputDecoration(
+                  labelText: 'Category',
+                  border: OutlineInputBorder(),
                 ),
-                const SizedBox(height: 16),
-
-                // Category Dropdown
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: colorScheme.outline.withOpacity(0.5)),
-                    borderRadius: BorderRadius.circular(12),
+                items: _categories.map((category) {
+                  return DropdownMenuItem(
+                    value: category,
+                    child: Text(category),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedCategory = value!;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: TextFormField(
+                      controller: _quantityController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Quantity',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter quantity';
+                        }
+                        if (double.tryParse(value) == null) {
+                          return 'Please enter valid number';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedCategory,
-                    decoration: InputDecoration(
-                      labelText: 'Category',
-                      prefixIcon: Icon(Icons.category_rounded, color: colorScheme.primary),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _unitController,
+                      decoration: const InputDecoration(
+                        labelText: 'Unit',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter unit';
+                        }
+                        return null;
+                      },
                     ),
-                    items: _categories.map((category) {
-                      return DropdownMenuItem(
-                        value: category,
-                        child: Text(category),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedCategory = value!;
-                      });
-                    },
                   ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _thresholdController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Minimum Threshold',
+                  border: OutlineInputBorder(),
                 ),
-                const SizedBox(height: 16),
-
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: _buildTextField(
-                        controller: _quantityController,
-                        label: 'Quantity',
-                        icon: Icons.numbers_rounded,
-                        keyboardType: TextInputType.number,
-                        validator: (value) => value?.isEmpty == true ? 'Required' : null,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: colorScheme.outline.withOpacity(0.5)),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(
-                            labelText: 'Unit',
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                          ),
-                          items: _units.map((unit) {
-                            return DropdownMenuItem(
-                              value: unit,
-                              child: Text(unit),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            _unitController.text = value!;
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter threshold';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter valid number';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Description (Optional)',
+                  border: OutlineInputBorder(),
                 ),
-                const SizedBox(height: 16),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildTextField(
-                        controller: _minQuantityController,
-                        label: 'Min. Quantity',
-                        icon: Icons.warning_rounded,
-                        keyboardType: TextInputType.number,
-                        validator: (value) => value?.isEmpty == true ? 'Required' : null,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildTextField(
-                        controller: _priceController,
-                        label: 'Price (₹)',
-                        icon: Icons.currency_rupee_rounded,
-                        keyboardType: TextInputType.number,
-                        validator: (value) => value?.isEmpty == true ? 'Required' : null,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                _buildTextField(
-                  controller: _descriptionController,
-                  label: 'Description (Optional)',
-                  icon: Icons.description_rounded,
-                  maxLines: 3,
-                ),
-                const SizedBox(height: 24),
-
-                // Action Buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: const Text('Cancel'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _saveItem,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: const Text('Add Item'),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                maxLines: 3,
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-    String? Function(String?)? validator,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: colorScheme.outline.withOpacity(0.5)),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        maxLines: maxLines,
-        validator: validator,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, color: colorScheme.primary),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
         ),
-      ),
-    );
-  }
+        Consumer(
+          builder: (context, ref, child) {
+            return ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  final newItem = InventoryItem(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    name: _nameController.text,
+                    category: _selectedCategory,
+                    quantity: double.parse(_quantityController.text),
+                    unit: _unitController.text,
+                    minThreshold: double.parse(_thresholdController.text),
+                    lastUpdated: DateTime.now(),
+                    description: _descriptionController.text.isEmpty
+                        ? null
+                        : _descriptionController.text,
+                  );
 
-  void _saveItem() {
-    if (_formKey.currentState!.validate()) {
-      final newItem = InventoryItem(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: _nameController.text,
-        category: _selectedCategory,
-        quantity: int.parse(_quantityController.text),
-        minQuantity: int.parse(_minQuantityController.text),
-        price: double.parse(_priceController.text),
-        unit: _unitController.text.isNotEmpty ? _unitController.text : 'pieces',
-        lastUpdated: DateTime.now(),
-        description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
-      );
+                  final currentItems = ref.read(inventoryItemsProvider);
+                  ref.read(inventoryItemsProvider.notifier).state = [
+                    ...currentItems,
+                    newItem,
+                  ];
 
-      final currentItems = ref.read(inventoryItemsProvider);
-      ref.read(inventoryItemsProvider.notifier).state = [...currentItems, newItem];
-      
-      Navigator.pop(context);
-      HapticFeedback.lightImpact();
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${newItem.name} added to inventory'),
-          backgroundColor: Theme.of(context).colorScheme.primary,
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Add Item'),
+            );
+          },
         ),
-      );
-    }
+      ],
+    );
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _quantityController.dispose();
-    _minQuantityController.dispose();
-    _priceController.dispose();
     _unitController.dispose();
+    _thresholdController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }

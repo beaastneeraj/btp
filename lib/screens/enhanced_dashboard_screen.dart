@@ -725,6 +725,22 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
         'route': '/weather',
       },
       {
+        'title': 'Crop Advisor',
+        'subtitle': 'AI-powered crop recommendations',
+        'icon': Icons.psychology_rounded,
+        'color': Colors.indigo,
+        'badge': 'Smart AI',
+        'route': '/crop-recommendation',
+      },
+      {
+        'title': 'Market Prices',
+        'subtitle': 'Live commodity prices',
+        'icon': Icons.trending_up_rounded,
+        'color': Colors.red,
+        'badge': 'Live Updates',
+        'route': '/market-prices',
+      },
+      {
         'title': 'Khatabook',
         'subtitle': 'Financial management',
         'icon': Icons.account_balance_wallet_rounded,
