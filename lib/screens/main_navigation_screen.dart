@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'simple_dashboard.dart';
+import 'enhanced_dashboard_screen.dart';
 import 'khatabook_analytics_screen.dart';
 import 'weather_screen.dart';
 import 'market_prices_screen.dart';
@@ -49,10 +49,10 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     final List<Widget> screens = [
-      const SimpleDashboard(),
-      const KhatabookAnalyticsScreen(),
+      const EnhancedDashboardScreen(),
+      const InventoryScreen(),
       const CropPlanningScreen(),
-      WeatherScreen(),
+      const KhatabookAnalyticsScreen(),
       const ProfileScreen(),
     ];
 
@@ -63,9 +63,9 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
         label: 'dashboard'.tr(languageCode),
       ),
       NavigationDestination(
-        icon: const Icon(Icons.analytics_outlined),
-        selectedIcon: const Icon(Icons.analytics),
-        label: 'analytics'.tr(languageCode),
+        icon: const Icon(Icons.inventory_2_outlined),
+        selectedIcon: const Icon(Icons.inventory_2),
+        label: 'inventory'.tr(languageCode),
       ),
       NavigationDestination(
         icon: const Icon(Icons.eco_outlined),
@@ -73,9 +73,9 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
         label: 'planning'.tr(languageCode),
       ),
       NavigationDestination(
-        icon: const Icon(Icons.cloud_outlined),
-        selectedIcon: const Icon(Icons.cloud),
-        label: 'weather'.tr(languageCode),
+        icon: const Icon(Icons.analytics_outlined),
+        selectedIcon: const Icon(Icons.analytics),
+        label: 'analytics'.tr(languageCode),
       ),
       NavigationDestination(
         icon: const Icon(Icons.person_outlined),

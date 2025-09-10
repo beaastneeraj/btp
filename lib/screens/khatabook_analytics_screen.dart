@@ -187,20 +187,22 @@ class _KhatabookAnalyticsScreenState extends State<KhatabookAnalyticsScreen>
   Widget _buildMetricCard(String title, String value, IconData icon, Color color, String change) {
     return Container(
       width: 180,
+      height: 120, // Fixed height to prevent overflow
       margin: const EdgeInsets.only(right: 12),
       child: Card(
         elevation: 4,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12), // Reduced padding
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute space evenly
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(icon, color: color, size: 24),
+                  Icon(icon, color: color, size: 20), // Smaller icon
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                     decoration: BoxDecoration(
                       color: Colors.green.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(4),
@@ -208,31 +210,39 @@ class _KhatabookAnalyticsScreenState extends State<KhatabookAnalyticsScreen>
                     child: Icon(
                       Icons.arrow_upward,
                       color: Colors.green,
-                      size: 12,
+                      size: 10, // Smaller arrow
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              Flexible(
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 18, // Slightly smaller
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
+              Flexible(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey.shade600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Text(
-                change,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.green.shade600,
+              Flexible(
+                child: Text(
+                  change,
+                  style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.green.shade600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

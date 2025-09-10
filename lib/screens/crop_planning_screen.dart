@@ -31,7 +31,8 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    _loadRecommendations();
+    // Delay the provider modification until after the widget tree is built
+    Future.microtask(() => _loadRecommendations());
   }
 
   @override
@@ -42,6 +43,9 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
   }
 
   Future<void> _loadRecommendations() async {
+    // Check if the widget is still mounted before modifying providers
+    if (!mounted) return;
+    
     ref.read(loadingProvider.notifier).state = true;
     
     try {
@@ -60,12 +64,16 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
         experienceLevel: 'intermediate',
       );
       
-      ref.read(cropRecommendationsProvider.notifier).state = recommendations;
+      if (mounted) {
+        ref.read(cropRecommendationsProvider.notifier).state = recommendations;
+      }
     } catch (e) {
       // Handle error
       print('Error loading recommendations: $e');
     } finally {
-      ref.read(loadingProvider.notifier).state = false;
+      if (mounted) {
+        ref.read(loadingProvider.notifier).state = false;
+      }
     }
   }
 
