@@ -1,0 +1,71 @@
+{
+  "tables": {
+    "users": {
+      "columns": [
+        "user_id",
+        "farmer_name",
+        "phone_number",
+        "district",
+        "state",
+        "land_size_acres",
+        "primary_crops",
+        "registration_date"
+      ],
+      "primary_key": "user_id",
+      "indexes": [
+        "phone_number",
+        "district"
+      ]
+    },
+    "crop_plans": {
+      "columns": [
+        "plan_id",
+        "user_id",
+        "crop_id",
+        "area_allocated_acres",
+        "sowing_date",
+        "expected_harvest_date",
+        "investment_amount",
+        "expected_yield"
+      ],
+      "primary_key": "plan_id",
+      "foreign_keys": {
+        "user_id": "users.user_id",
+        "crop_id": "crops.crop_id"
+      }
+    },
+    "weather_alerts": {
+      "columns": [
+        "alert_id",
+        "user_id",
+        "alert_type",
+        "message",
+        "severity",
+        "date_issued",
+        "expiry_date"
+      ],
+      "primary_key": "alert_id",
+      "indexes": [
+        "user_id",
+        "date_issued"
+      ]
+    },
+    "market_notifications": {
+      "columns": [
+        "notification_id",
+        "user_id",
+        "crop_id",
+        "current_price",
+        "price_trend",
+        "recommendation",
+        "date_sent"
+      ],
+      "primary_key": "notification_id",
+      "indexes": [
+        "user_id",
+        "crop_id",
+        "date_sent"
+      ]
+    }
+  }
+}

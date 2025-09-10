@@ -1,0 +1,168 @@
+{
+  "regions": {
+    "north_india": {
+      "states": [
+        "Punjab",
+        "Haryana",
+        "Himachal Pradesh",
+        "Uttarakhand",
+        "Delhi"
+      ],
+      "primary_crops": [
+        "wheat",
+        "rice",
+        "maize",
+        "barley",
+        "mustard"
+      ],
+      "seasons": {
+        "kharif": {
+          "start": "June",
+          "end": "October"
+        },
+        "rabi": {
+          "start": "November",
+          "end": "April"
+        },
+        "zaid": {
+          "start": "March",
+          "end": "June"
+        }
+      },
+      "soil_types": [
+        "Alluvial",
+        "Mountainous"
+      ],
+      "languages": [
+        "Hindi",
+        "Punjabi"
+      ],
+      "currency": "INR",
+      "measurement_units": "metric"
+    },
+    "west_india": {
+      "states": [
+        "Maharashtra",
+        "Gujarat",
+        "Rajasthan",
+        "Goa"
+      ],
+      "primary_crops": [
+        "cotton",
+        "sugarcane",
+        "groundnut",
+        "bajra",
+        "jowar"
+      ],
+      "seasons": {
+        "kharif": {
+          "start": "June",
+          "end": "October"
+        },
+        "rabi": {
+          "start": "November",
+          "end": "March"
+        },
+        "zaid": {
+          "start": "March",
+          "end": "June"
+        }
+      },
+      "soil_types": [
+        "Black",
+        "Arid",
+        "Red"
+      ],
+      "languages": [
+        "Hindi",
+        "Marathi",
+        "Gujarati"
+      ],
+      "currency": "INR",
+      "measurement_units": "metric"
+    },
+    "south_india": {
+      "states": [
+        "Karnataka",
+        "Tamil Nadu",
+        "Andhra Pradesh",
+        "Telangana",
+        "Kerala"
+      ],
+      "primary_crops": [
+        "rice",
+        "ragi",
+        "cotton",
+        "sugarcane",
+        "coconut"
+      ],
+      "seasons": {
+        "kharif": {
+          "start": "June",
+          "end": "September"
+        },
+        "rabi": {
+          "start": "October",
+          "end": "February"
+        },
+        "summer": {
+          "start": "March",
+          "end": "May"
+        }
+      },
+      "soil_types": [
+        "Red",
+        "Black",
+        "Laterite"
+      ],
+      "languages": [
+        "Tamil",
+        "Telugu",
+        "Kannada",
+        "Malayalam"
+      ],
+      "currency": "INR",
+      "measurement_units": "metric"
+    },
+    "east_india": {
+      "states": [
+        "West Bengal",
+        "Bihar",
+        "Jharkhand",
+        "Odisha"
+      ],
+      "primary_crops": [
+        "rice",
+        "jute",
+        "tea",
+        "maize",
+        "wheat"
+      ],
+      "seasons": {
+        "kharif": {
+          "start": "May",
+          "end": "October"
+        },
+        "rabi": {
+          "start": "November",
+          "end": "April"
+        },
+        "zaid": {
+          "start": "March",
+          "end": "June"
+        }
+      },
+      "soil_types": [
+        "Alluvial",
+        "Red",
+        "Laterite"
+      ],
+      "languages": [
+        "Bengali",
+        "Hindi"
+      ],
+      "currency": "INR",
+      "measurement_units": "metric"
+    }
+  }
+}

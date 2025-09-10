@@ -1,0 +1,51 @@
+region_id,state,district,soil_type,ph_level,organic_carbon_percent,nitrogen_kg_hectare,phosphorus_kg_hectare,potassium_kg_hectare,micronutrient_status,drainage_capacity
+1,Punjab,Ludhiana,Alluvial,7.2,0.65,280,22,180,Medium,Good
+2,Haryana,Karnal,Alluvial,7.5,0.58,260,18,160,Medium,Good
+3,Uttar Pradesh,Meerut,Alluvial,7.1,0.72,290,25,190,High,Moderate
+4,Madhya Pradesh,Bhopal,Black,7.8,0.85,320,28,220,High,Good
+5,West Bengal,Kolkata,Alluvial,6.8,0.95,350,32,240,High,Poor
+6,Maharashtra,Pune,Black,8.2,0.78,300,26,200,Medium,Good
+7,Karnataka,Bangalore,Red,6.5,0.45,200,15,140,Low,Good
+8,Tamil Nadu,Chennai,Red,6.9,0.52,220,18,150,Medium,Moderate
+9,Gujarat,Ahmedabad,Alluvial,7.4,0.63,270,21,175,Medium,Good
+10,Rajasthan,Jaipur,Arid,8.1,0.35,180,12,120,Low,Poor
+11,Punjab,Ludhiana,Alluvial,7.2,0.65,280,22,180,Medium,Good
+12,Haryana,Karnal,Alluvial,7.5,0.58,260,18,160,Medium,Good
+13,Uttar Pradesh,Meerut,Alluvial,7.1,0.72,290,25,190,High,Moderate
+14,Madhya Pradesh,Bhopal,Black,7.8,0.85,320,28,220,High,Good
+15,West Bengal,Kolkata,Alluvial,6.8,0.95,350,32,240,High,Poor
+16,Maharashtra,Pune,Black,8.2,0.78,300,26,200,Medium,Good
+17,Karnataka,Bangalore,Red,6.5,0.45,200,15,140,Low,Good
+18,Tamil Nadu,Chennai,Red,6.9,0.52,220,18,150,Medium,Moderate
+19,Gujarat,Ahmedabad,Alluvial,7.4,0.63,270,21,175,Medium,Good
+20,Rajasthan,Jaipur,Arid,8.1,0.35,180,12,120,Low,Poor
+21,Punjab,Ludhiana,Alluvial,7.2,0.65,280,22,180,Medium,Good
+22,Haryana,Karnal,Alluvial,7.5,0.58,260,18,160,Medium,Good
+23,Uttar Pradesh,Meerut,Alluvial,7.1,0.72,290,25,190,High,Moderate
+24,Madhya Pradesh,Bhopal,Black,7.8,0.85,320,28,220,High,Good
+25,West Bengal,Kolkata,Alluvial,6.8,0.95,350,32,240,High,Poor
+26,Maharashtra,Pune,Black,8.2,0.78,300,26,200,Medium,Good
+27,Karnataka,Bangalore,Red,6.5,0.45,200,15,140,Low,Good
+28,Tamil Nadu,Chennai,Red,6.9,0.52,220,18,150,Medium,Moderate
+29,Gujarat,Ahmedabad,Alluvial,7.4,0.63,270,21,175,Medium,Good
+30,Rajasthan,Jaipur,Arid,8.1,0.35,180,12,120,Low,Poor
+31,Punjab,Ludhiana,Alluvial,7.2,0.65,280,22,180,Medium,Good
+32,Haryana,Karnal,Alluvial,7.5,0.58,260,18,160,Medium,Good
+33,Uttar Pradesh,Meerut,Alluvial,7.1,0.72,290,25,190,High,Moderate
+34,Madhya Pradesh,Bhopal,Black,7.8,0.85,320,28,220,High,Good
+35,West Bengal,Kolkata,Alluvial,6.8,0.95,350,32,240,High,Poor
+36,Maharashtra,Pune,Black,8.2,0.78,300,26,200,Medium,Good
+37,Karnataka,Bangalore,Red,6.5,0.45,200,15,140,Low,Good
+38,Tamil Nadu,Chennai,Red,6.9,0.52,220,18,150,Medium,Moderate
+39,Gujarat,Ahmedabad,Alluvial,7.4,0.63,270,21,175,Medium,Good
+40,Rajasthan,Jaipur,Arid,8.1,0.35,180,12,120,Low,Poor
+41,Punjab,Ludhiana,Alluvial,7.2,0.65,280,22,180,Medium,Good
+42,Haryana,Karnal,Alluvial,7.5,0.58,260,18,160,Medium,Good
+43,Uttar Pradesh,Meerut,Alluvial,7.1,0.72,290,25,190,High,Moderate
+44,Madhya Pradesh,Bhopal,Black,7.8,0.85,320,28,220,High,Good
+45,West Bengal,Kolkata,Alluvial,6.8,0.95,350,32,240,High,Poor
+46,Maharashtra,Pune,Black,8.2,0.78,300,26,200,Medium,Good
+47,Karnataka,Bangalore,Red,6.5,0.45,200,15,140,Low,Good
+48,Tamil Nadu,Chennai,Red,6.9,0.52,220,18,150,Medium,Moderate
+49,Gujarat,Ahmedabad,Alluvial,7.4,0.63,270,21,175,Medium,Good
+50,Rajasthan,Jaipur,Arid,8.1,0.35,180,12,120,Low,Poor

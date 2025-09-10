@@ -1,0 +1,61 @@
+region_id,input_type,input_name,cost_per_unit,unit_type,supplier_contact,availability_status,last_updated
+1,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+2,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+3,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+4,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+5,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11
+6,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+7,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+8,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+9,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+10,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11
+11,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+12,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+13,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+14,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+15,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11
+16,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+17,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+18,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+19,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+20,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11
+21,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+22,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+23,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+24,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+25,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11
+26,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+27,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+28,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+29,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+30,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11
+31,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+32,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+33,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+34,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+35,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11
+36,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+37,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+38,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+39,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+40,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11
+41,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+42,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+43,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+44,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+45,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11
+46,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+47,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+48,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+49,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+50,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11
+51,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+52,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+53,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+54,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+55,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11
+56,Seed,Certified Seeds,50,kg,+91-98765-43210,Available,2025-09-11
+57,Fertilizer,DAP,1350,bag_50kg,+91-98765-43211,Available,2025-09-11
+58,Pesticide,Insecticide,800,liter,+91-98765-43212,Available,2025-09-11
+59,Labor,Daily Labor,400,day,Local Labor,Available,2025-09-11
+60,Machinery,Tractor Rental,800,hour,+91-98765-43213,Available,2025-09-11

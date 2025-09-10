@@ -63,3 +63,13 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  
+  assets:
+    - CSV Data/
+    - CSV Data/soil_data_by_region.csv
+    - CSV Data/regional_crop_calendar.csv
+    - CSV Data/historical_weather_data.csv
+    - CSV Data/input_costs_regional.csv
+    - CSV Data/regional_configuration.json
+    - CSV Data/mobile_app_database_schema.json
+    - CSV Data/implementation_roadmap.json

@@ -119,10 +119,12 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
                 background: AnimatedBuilder(
                   animation: _headerAnimationController,
                   builder: (context, child) {
+                    final clampedOpacity = _headerFadeAnimation.value.clamp(0.0, 1.0);
+                    
                     return Transform.translate(
                       offset: Offset(0, _headerSlideAnimation.value),
                       child: Opacity(
-                        opacity: _headerFadeAnimation.value,
+                        opacity: clampedOpacity,
                         child: _buildAnimatedHeader(colorScheme, isTablet),
                       ),
                     );
@@ -136,10 +138,13 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
               child: AnimatedBuilder(
                 animation: _cardAnimationController,
                 builder: (context, child) {
+                  final clampedOpacity = _cardStaggerAnimation.value.clamp(0.0, 1.0);
+                  final clampedScale = (0.8 + (0.2 * _cardStaggerAnimation.value)).clamp(0.1, 1.0);
+                  
                   return Transform.scale(
-                    scale: 0.8 + (0.2 * _cardStaggerAnimation.value),
+                    scale: clampedScale,
                     child: Opacity(
-                      opacity: _cardStaggerAnimation.value,
+                      opacity: clampedOpacity,
                       child: _buildQuickStatsSection(colorScheme, isTablet),
                     ),
                   );
@@ -162,19 +167,23 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
                     return AnimatedBuilder(
                       animation: _cardAnimationController,
                       builder: (context, child) {
-                        final delay = index * 0.1;
+                        final delay = (index * 0.1).clamp(0.0, 0.8);
+                        final endDelay = (delay + 0.2).clamp(delay + 0.1, 1.0);
                         final animation = Tween<double>(
                           begin: 0,
                           end: 1,
                         ).animate(CurvedAnimation(
                           parent: _cardAnimationController,
-                          curve: Interval(delay, 1.0, curve: Curves.elasticOut),
+                          curve: Interval(delay, endDelay, curve: Curves.easeOut),
                         ));
                         
+                        final clampedOpacity = animation.value.clamp(0.0, 1.0);
+                        final clampedScale = (0.8 + (0.2 * animation.value)).clamp(0.1, 1.0);
+                        
                         return Transform.scale(
-                          scale: 0.8 + (0.2 * animation.value),
+                          scale: clampedScale,
                           child: Opacity(
-                            opacity: animation.value,
+                            opacity: clampedOpacity,
                             child: _buildFeatureCard(
                               _getFeatureData()[index],
                               colorScheme,
@@ -195,10 +204,12 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
               child: AnimatedBuilder(
                 animation: _cardAnimationController,
                 builder: (context, child) {
+                  final clampedOpacity = _cardStaggerAnimation.value.clamp(0.0, 1.0);
+                  
                   return Transform.translate(
                     offset: Offset(0, 50 * (1 - _cardStaggerAnimation.value)),
                     child: Opacity(
-                      opacity: _cardStaggerAnimation.value,
+                      opacity: clampedOpacity,
                       child: _buildRecentActivitySection(colorScheme),
                     ),
                   );
@@ -513,8 +524,11 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
                     duration: Duration(milliseconds: 500 + (index * 100)),
                     tween: Tween(begin: 0, end: 1),
                     builder: (context, value, child) {
+                      final clampedValue = value.clamp(0.0, 1.0);
+                      final clampedScale = (0.5 + (0.5 * clampedValue)).clamp(0.1, 1.0);
+                      
                       return Transform.scale(
-                        scale: 0.5 + (0.5 * value),
+                        scale: clampedScale,
                         child: Container(
                           width: 60,
                           height: 60,
