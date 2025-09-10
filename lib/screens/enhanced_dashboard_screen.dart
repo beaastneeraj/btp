@@ -793,13 +793,20 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
     // Navigate to respective screens
     switch (route) {
       case '/inventory':
+      case '/fields':
+      case '/crops':
+      case '/weather':
+      case '/crop-recommendation':
+      case '/market-prices':
+      case '/expenses':
+      case '/reports':
         Navigator.pushNamed(context, route);
         break;
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Opening $route...'),
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            content: Text('Route $route not found'),
+            backgroundColor: Colors.red,
           ),
         );
     }
@@ -904,7 +911,13 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
                       'Add Task',
                       Icons.add_task_rounded,
                       Colors.blue,
-                      () => Navigator.pop(context),
+                      () {
+                        Navigator.pop(context);
+                        // Navigate to task management or create task
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Task management coming soon!')),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -913,7 +926,10 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
                       'Add Expense',
                       Icons.add_card_rounded,
                       Colors.purple,
-                      () => Navigator.pop(context),
+                      () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/expenses');
+                      },
                     ),
                   ),
                 ],
@@ -938,7 +954,10 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
                       'Log Activity',
                       Icons.note_add_rounded,
                       Colors.green,
-                      () => Navigator.pop(context),
+                      () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/reports');
+                      },
                     ),
                   ),
                 ],
