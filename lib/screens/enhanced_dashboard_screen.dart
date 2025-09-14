@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import '../widgets/animated_widgets.dart';
+import 'ai_vision_crop_analysis_screen.dart';
 import 'dart:math' as math;
 
 // Enhanced Dashboard with Animations and Mobile Optimization
@@ -224,24 +225,56 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
           ],
         ),
       ),
-      floatingActionButton: AnimatedBuilder(
-        animation: _floatingAnimation,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: 1.0 + (0.1 * math.sin(_floatingAnimation.value * math.pi * 2)),
-            child: FloatingActionButton.extended(
-              onPressed: () => _showQuickActions(context),
-              backgroundColor: colorScheme.primary,
-              foregroundColor: colorScheme.onPrimary,
-              elevation: 8,
-              icon: const Icon(Icons.add_rounded),
-              label: Text(
-                'Quick Add',
-                style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
-              ),
-            ),
-          );
-        },
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          // AI Vision FAB
+          AnimatedBuilder(
+            animation: _floatingAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: 1.0 + (0.05 * math.sin(_floatingAnimation.value * math.pi * 2)),
+                child: FloatingActionButton(
+                  heroTag: "ai_vision",
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AIVisionCropAnalysisScreen(),
+                      ),
+                    );
+                  },
+                  backgroundColor: colorScheme.tertiary,
+                  foregroundColor: colorScheme.onTertiary,
+                  elevation: 8,
+                  child: const Icon(Icons.camera_alt),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          // Quick Add FAB
+          AnimatedBuilder(
+            animation: _floatingAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: 1.0 + (0.1 * math.sin(_floatingAnimation.value * math.pi * 2)),
+                child: FloatingActionButton.extended(
+                  heroTag: "quick_add",
+                  onPressed: () => _showQuickActions(context),
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
+                  elevation: 8,
+                  icon: const Icon(Icons.add_rounded),
+                  label: Text(
+                    'Quick Add',
+                    style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -707,6 +740,15 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
   List<Map<String, dynamic>> _getFeatureData() {
     return [
       {
+        'title': 'AI Vision',
+        'subtitle': 'Advanced crop analysis with AI',
+        'icon': Icons.camera_alt_rounded,
+        'color': Colors.deepPurple,
+        'badge': 'New AI',
+        'route': '/ai-vision',
+        'isNew': true,
+      },
+      {
         'title': 'Smart Fields',
         'subtitle': 'Manage your agricultural fields',
         'icon': Icons.landscape_rounded,
@@ -806,6 +848,14 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
   void _navigateToFeature(String route) {
     // Navigate to respective screens
     switch (route) {
+      case '/ai-vision':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AIVisionCropAnalysisScreen(),
+          ),
+        );
+        break;
       case '/inventory':
       case '/fields':
       case '/crops':

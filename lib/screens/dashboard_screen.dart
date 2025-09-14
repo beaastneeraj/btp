@@ -13,7 +13,12 @@ import 'inventory_screen.dart';
 import 'tasks_screen.dart';
 import 'weather_screen.dart';
 import 'reports_screen.dart';
+import 'satellite_data_dashboard.dart';
+import 'comprehensive_agricultural_dashboard.dart';
+import 'ai_vision_crop_analysis_screen.dart';
 import 'profile_screen.dart';
+import 'comprehensive_agricultural_dashboard.dart';
+import 'ai_vision_crop_analysis_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -913,6 +918,36 @@ class DashboardScreen extends StatelessWidget {
           mainAxisSpacing: 16,
           childAspectRatio: 1.2,
           children: [
+            _buildNavigationCard(
+              context,
+              'Satellite Intelligence',
+              Icons.satellite_alt,
+              Colors.deepPurple,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SatelliteDataDashboard()),
+              ),
+            ),
+            _buildNavigationCard(
+              context,
+              'Agricultural Intelligence',
+              Icons.psychology,
+              Colors.indigo,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ComprehensiveAgriculturalDashboard()),
+              ),
+            ),
+            _buildNavigationCard(
+              context,
+              'AI Vision Analysis',
+              Icons.camera_alt,
+              Colors.teal,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AIVisionCropAnalysisScreen()),
+              ),
+            ),
             _buildNavigationCard(
               context,
               'Fields & Crops',

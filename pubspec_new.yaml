@@ -1,0 +1,50 @@
+name: btp
+description: "Modern Indian Farming Application"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Core packages
+  flutter_riverpod: ^2.5.1
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # Firebase
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.3
+
+  # UI packages
+  flutter_animate: ^4.5.0
+  dynamic_color: ^1.7.0
+  google_fonts: ^6.2.1
+  
+  # Charts
+  fl_chart: ^0.69.0
+  
+  # Networking
+  dio: ^5.7.0
+  
+  # Storage
+  shared_preferences: ^2.3.2
+  
+  # Utilities
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
+
+flutter:
+  uses-material-design: true

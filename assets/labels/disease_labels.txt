@@ -1,0 +1,20 @@
+Healthy
+Bacterial Blight
+Brown Spot
+Leaf Blast
+Tungro
+Bacterial Leaf Streak
+Sheath Blight
+Yellow Dwarf
+Downy Mildew
+Anthracnose
+False Smut
+Stem Rot
+Root Rot
+Leaf Scald
+Bakanae Disease
+Blast Disease
+Sheath Rot
+Grain Discoloration
+Narrow Brown Spot
+Bacterial Leaf Blight

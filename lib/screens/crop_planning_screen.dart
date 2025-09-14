@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../providers/theme_provider.dart';
 import '../services/crop_planning_service.dart';
 import '../services/localization_service.dart';
+import '../widgets/shared_components.dart';
 
 // Providers
 final cropPlanningServiceProvider = Provider<CropPlanningService>((ref) => CropPlanningService());
@@ -22,7 +23,7 @@ class CropPlanningScreen extends ConsumerStatefulWidget {
 }
 
 class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AppAnimationMixin {
   late TabController _tabController;
   final PageController _pageController = PageController();
   int _currentPageIndex = 0;
@@ -31,6 +32,8 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    setupStandardAnimations();
+    startStandardAnimations();
     // Delay the provider modification until after the widget tree is built
     Future.microtask(() => _loadRecommendations());
   }
@@ -39,6 +42,7 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
   void dispose() {
     _tabController.dispose();
     _pageController.dispose();
+    disposeStandardAnimations();
     super.dispose();
   }
 
@@ -79,52 +83,137 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = ref.watch(themeModeProvider) == ThemeMode.dark;
+    final appSettings = ref.watch(appSettingsProvider);
+    final languageCode = appSettings.locale.languageCode;
+    final colorScheme = Theme.of(context).colorScheme;
     final isLoading = ref.watch(loadingProvider);
     final recommendations = ref.watch(cropRecommendationsProvider);
 
     return Scaffold(
-      backgroundColor: isDarkMode ? Colors.grey[900] : Colors.grey[50],
-      appBar: AppBar(
-        title: Text(
-          'Crop Planning',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-        ),
-        backgroundColor: isDarkMode ? Colors.grey[850] : Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: _loadRecommendations,
-            icon: Icon(isLoading ? Icons.hourglass_empty : Icons.refresh),
-          ),
-        ],
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Recommendations', icon: Icon(Icons.lightbulb_outline)),
-            Tab(text: 'Calendar', icon: Icon(Icons.calendar_month)),
-            Tab(text: 'Analysis', icon: Icon(Icons.analytics)),
-            Tab(text: 'Planning', icon: Icon(Icons.schedule)),
+      backgroundColor: colorScheme.surface,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _loadRecommendations();
+        },
+        child: CustomScrollView(
+          slivers: [
+            StandardAppBar(
+              title: 'Crop Planning',
+              subtitle: 'Smart Recommendations & Analysis',
+              icon: Icons.eco,
+              statusChips: [
+                StandardStatusChip(
+                  label: '4 Seasons',
+                  icon: Icons.calendar_month,
+                  color: Colors.green,
+                ),
+                StandardStatusChip(
+                  label: '15 Crops',
+                  icon: Icons.agriculture,
+                  color: Colors.blue,
+                ),
+                StandardStatusChip(
+                  label: 'AI Ready',
+                  icon: Icons.smart_toy,
+                  color: Colors.purple,
+                ),
+              ],
+              slideAnimation: headerSlideAnimation,
+              fadeAnimation: headerFadeAnimation,
+              colorScheme: colorScheme,
+              actions: [
+                IconButton(
+                  onPressed: _loadRecommendations,
+                  icon: Icon(isLoading ? Icons.hourglass_empty : Icons.refresh),
+                ),
+              ],
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  if (isLoading && recommendations == null)
+                    Container(
+                      height: 200,
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (recommendations == null)
+                    _buildErrorState()
+                  else ...[
+                    _buildTabsSection(recommendations),
+                    SizedBox(height: 20),
+                    _buildTabContent(recommendations),
+                  ],
+                  const SizedBox(height: 100), // Space for FAB
+                ]),
+              ),
+            ),
           ],
         ),
       ),
-      body: isLoading && recommendations == null
-          ? const Center(child: CircularProgressIndicator())
-          : recommendations == null
-              ? _buildErrorState()
-              : TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildRecommendationsTab(recommendations),
-                    _buildCalendarTab(recommendations),
-                    _buildAnalysisTab(recommendations),
-                    _buildPlanningTab(recommendations),
-                  ],
-                ),
+      floatingActionButton: StandardFloatingActionButton(
+        label: 'New Plan',
+        icon: Icons.add,
+        onPressed: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('New Crop Plan feature coming soon!')),
+          );
+        },
+        animation: floatingAnimation,
+        colorScheme: colorScheme,
+      ),
+    );
+  }
+
+  Widget _buildTabsSection(Map<String, dynamic> data) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return AnimatedBuilder(
+      animation: cardStaggerAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: cardStaggerAnimation.value,
+          child: Card(
+            elevation: 2,
+            color: colorScheme.surfaceVariant,
+            child: TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(text: 'Recommendations', icon: Icon(Icons.lightbulb_outline)),
+                Tab(text: 'Calendar', icon: Icon(Icons.calendar_month)),
+                Tab(text: 'Analysis', icon: Icon(Icons.analytics)),
+                Tab(text: 'Planning', icon: Icon(Icons.schedule)),
+              ],
+              labelColor: colorScheme.primary,
+              unselectedLabelColor: colorScheme.onSurfaceVariant,
+              indicator: BoxDecoration(
+                color: colorScheme.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTabContent(Map<String, dynamic> data) {
+    return Container(
+      height: 600,
+      child: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildRecommendationsTab(data),
+          _buildCalendarTab(data),
+          _buildAnalysisTab(data),
+          _buildPlanningTab(data),
+        ],
+      ),
     );
   }
 
   Widget _buildErrorState() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

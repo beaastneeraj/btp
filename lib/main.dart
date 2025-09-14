@@ -13,6 +13,7 @@ import 'screens/reports_screen.dart';
 import 'screens/crop_recommendation_screen.dart';
 import 'screens/enhanced_crop_recommendation_screen.dart';
 import 'screens/market_price_screen.dart';
+import 'screens/iot_devices_screen.dart';
 import 'providers/theme_provider.dart';
 import 'services/localization_service.dart';
 
@@ -286,6 +287,7 @@ class IndianFarmingApp extends ConsumerWidget {
             '/market-prices': (context) => const MarketPriceScreen(),
             '/expenses': (context) => const KhatabookAnalyticsScreen(),
             '/reports': (context) => const ReportsScreen(),
+            '/iot-devices': (context) => const IoTDevicesScreen(),
           },
           home: const SplashScreen(),
         );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'enhanced_dashboard_screen.dart';
+import 'smart_enhanced_dashboard_improved.dart';
 import 'khatabook_analytics_screen.dart';
 import 'weather_screen.dart';
 import 'market_prices_screen.dart';
@@ -11,6 +12,7 @@ import 'tasks_screen.dart';
 import 'inventory_screen.dart';
 import 'reports_screen.dart';
 import 'profile_screen.dart';
+import 'iot_devices_screen.dart';
 import '../providers/theme_provider.dart';
 import '../services/localization_service.dart';
 
@@ -48,11 +50,11 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
     final languageCode = appSettings.locale.languageCode;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final List<Widget> screens = [
-      const EnhancedDashboardScreen(),
+    final screens = [
+      const SmartEnhancedDashboardScreen(),
       const InventoryScreen(),
       const CropPlanningScreen(),
-      const KhatabookAnalyticsScreen(),
+      KhatabookAnalyticsScreen(),
       const ProfileScreen(),
     ];
 
