@@ -524,6 +524,8 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
     final cropId = crop['cropId'] as String;
     final profit = crop['profit'] as double;
     final roi = crop['roi'] as double;
+    final cropService = ref.read(cropPlanningServiceProvider);
+    final cropData = cropService.getCropDetails(cropId);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -548,21 +550,47 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
               color: Colors.green.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.eco, color: Colors.green, size: 24),
+            child: Text(
+              _getCropEmoji(cropId),
+              style: TextStyle(fontSize: 28),
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  cropId.toUpperCase(),
-                  style: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: isDarkMode ? Colors.white : Colors.black87,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      cropData?['name'] ?? cropId.toUpperCase(),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isDarkMode ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    if (cropData != null) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: _getSeasonColor(cropData['season']).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          cropData['season'],
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: _getSeasonColor(cropData['season']),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
+                const SizedBox(height: 2),
                 Text(
                   'Expected Profit: ₹${NumberFormat('#,##,###').format(profit)}',
                   style: GoogleFonts.inter(
@@ -621,9 +649,16 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
             children: [
               Row(
                 children: [
-                  Text(
-                    '🌾',
-                    style: TextStyle(fontSize: 24),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: _getSeasonColor(cropData['season']).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      _getCropEmoji(recommendation['cropId']),
+                      style: TextStyle(fontSize: 28),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Column(
@@ -2621,6 +2656,54 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
         return Colors.orange;
       case 'Low':
         return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _getCropEmoji(String cropId) {
+    switch (cropId) {
+      case 'wheat':
+        return '🌾';
+      case 'rice':
+        return '🌾';
+      case 'maize':
+        return '🌽';
+      case 'cotton':
+        return '🌸';
+      case 'sugarcane':
+        return '🎋';
+      case 'soybean':
+        return '🫘';
+      case 'chickpea':
+        return '🫘';
+      case 'mustard':
+        return '🌼';
+      case 'groundnut':
+        return '🥜';
+      case 'pigeon_pea':
+        return '🫘';
+      case 'pearl_millet':
+        return '🌾';
+      case 'tomato':
+        return '🍅';
+      case 'onion':
+        return '🧅';
+      default:
+        return '🌱';
+    }
+  }
+
+  Color _getSeasonColor(String season) {
+    switch (season) {
+      case 'Kharif':
+        return Colors.green;
+      case 'Rabi':
+        return Colors.orange;
+      case 'Zaid':
+        return Colors.purple;
+      case 'Perennial':
+        return Colors.blue;
       default:
         return Colors.grey;
     }
