@@ -134,8 +134,39 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
                 delegate: SliverChildListDelegate([
                   if (isLoading && recommendations == null)
                     Container(
-                      height: 200,
-                      child: Center(child: CircularProgressIndicator()),
+                      height: 300,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            Text(
+                              'Analyzing crop conditions...',
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Fetching weather data and market prices',
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     )
                   else if (recommendations == null)
                     _buildErrorState()
@@ -214,20 +245,65 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
 
   Widget _buildErrorState() {
     final colorScheme = Theme.of(context).colorScheme;
-    return Center(
+    final isDarkMode = ref.watch(themeModeProvider) == ThemeMode.dark;
+    
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey[800] : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 64, color: Colors.grey),
-          const SizedBox(height: 16),
-          Text(
-            'Failed to load crop planning data',
-            style: GoogleFonts.inter(fontSize: 18, color: Colors.grey),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.orange.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.cloud_off, size: 64, color: Colors.orange),
           ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _loadRecommendations,
-            child: Text('Retry'),
+          const SizedBox(height: 24),
+          Text(
+            'Unable to Load Data',
+            style: GoogleFonts.inter(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: isDarkMode ? Colors.white : Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'We couldn\'t fetch the latest crop recommendations.\nPlease check your internet connection.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: isDarkMode ? Colors.white70 : Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: 200,
+            child: ElevatedButton.icon(
+              onPressed: _loadRecommendations,
+              icon: Icon(Icons.refresh),
+              label: Text('Try Again'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -407,9 +483,35 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
           // Update button
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _loadRecommendations,
-              child: Text('Update Recommendations'),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                _loadRecommendations();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.white),
+                        const SizedBox(width: 12),
+                        Text('Updating recommendations with new parameters...'),
+                      ],
+                    ),
+                    backgroundColor: Colors.green,
+                    behavior: SnackBarBehavior.floating,
+                    duration: Duration(seconds: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                );
+              },
+              icon: Icon(Icons.refresh),
+              label: Text('Update Recommendations'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ),
         ],

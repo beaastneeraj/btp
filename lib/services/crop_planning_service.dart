@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import '../services/weather_service.dart';
 import '../services/market_data_service.dart';
+import '../services/csv_data_service.dart';
 
 class CropPlanningService {
   static final CropPlanningService _instance = CropPlanningService._internal();
@@ -11,6 +12,7 @@ class CropPlanningService {
 
   final WeatherService _weatherService = WeatherService();
   final MarketDataService _marketService = MarketDataService();
+  final CsvDataService _csvDataService = CsvDataService();
 
   // Comprehensive crop database with scientific data
   static const Map<String, Map<String, dynamic>> _cropDatabase = {
@@ -938,5 +940,44 @@ class CropPlanningService {
       'schedule': schedule,
       'harvestDate': plantingDate.add(Duration(days: cropData['duration'] as int)),
     };
+  }
+
+  /// Get enriched recommendations with regional CSV data
+  Future<Map<String, dynamic>> getEnrichedRecommendations({
+    required double latitude,
+    required double longitude,
+    required double fieldSize,
+    String? state,
+    String? district,
+  }) async {
+    try {
+      // Get base recommendations
+      final baseRecommendations = await getCropRecommendations(
+        latitude: latitude,
+        longitude: longitude,
+        fieldSize: fieldSize,
+      );
+
+      // Enrich with CSV data if state is provided
+      if (state != null) {
+        final soilData = await _csvDataService.getSoilDataByRegion(state, district);
+        final cropCalendar = await _csvDataService.getCropCalendarForRegion(state, null);
+        final inputCosts = await _csvDataService.getInputCostsByRegion(state);
+
+        baseRecommendations['regionalData'] = {
+          'soilData': soilData,
+          'cropCalendar': cropCalendar,
+          'inputCosts': inputCosts,
+        };
+      }
+
+      return baseRecommendations;
+    } catch (e) {
+      return await getCropRecommendations(
+        latitude: latitude,
+        longitude: longitude,
+        fieldSize: fieldSize,
+      );
+    }
   }
 }
