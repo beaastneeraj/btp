@@ -3,7 +3,7 @@ import '../services/satellite_data_service.dart';
 
 /// Simple demo app to showcase the Satellite Data Service
 class SatelliteServiceDemo extends StatefulWidget {
-  const SatelliteServiceDemo({Key? key}) : super(key: key);
+  const SatelliteServiceDemo({super.key});
 
   @override
   _SatelliteServiceDemoState createState() => _SatelliteServiceDemoState();

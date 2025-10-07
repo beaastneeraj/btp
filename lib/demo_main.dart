@@ -7,6 +7,8 @@ void main() {
 }
 
 class SmartAgricultureDemoApp extends StatelessWidget {
+  const SmartAgricultureDemoApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,11 +23,9 @@ class SmartAgricultureDemoApp extends StatelessWidget {
           primary: Colors.green,
           secondary: Colors.blue,
           surface: Colors.white.withOpacity(0.1),
-          background: Color(0xFF0F1419),
           onPrimary: Colors.white,
           onSecondary: Colors.white,
           onSurface: Colors.white,
-          onBackground: Colors.white,
         ),
       ),
       home: ComprehensiveAgricultureApp(),

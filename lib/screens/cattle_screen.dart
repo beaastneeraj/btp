@@ -257,7 +257,7 @@ class _CattleScreenState extends State<CattleScreen> with TickerProviderStateMix
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: selectedCategory,
+                    initialValue: selectedCategory,
                     decoration: InputDecoration(
                       labelText: 'Category',
                       border: OutlineInputBorder(
@@ -281,7 +281,7 @@ class _CattleScreenState extends State<CattleScreen> with TickerProviderStateMix
                 const SizedBox(width: 16),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: selectedHealthStatus,
+                    initialValue: selectedHealthStatus,
                     decoration: InputDecoration(
                       labelText: 'Health Status',
                       border: OutlineInputBorder(
@@ -546,7 +546,7 @@ class _CattleScreenState extends State<CattleScreen> with TickerProviderStateMix
                     ),
                   ],
                 ),
-              )).toList(),
+              )),
           ],
         ),
       ),
@@ -607,7 +607,7 @@ class _CattleScreenState extends State<CattleScreen> with TickerProviderStateMix
                   ),
                 ],
               ),
-            )).toList(),
+            )),
           ],
         ),
       ),
@@ -846,7 +846,7 @@ class _CattleScreenState extends State<CattleScreen> with TickerProviderStateMix
                   color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                 ),
               ),
-            )).toList(),
+            )),
           ],
         ),
       ),
@@ -892,7 +892,7 @@ class _CattleScreenState extends State<CattleScreen> with TickerProviderStateMix
           mainAxisSize: MainAxisSize.min,
           children: [
             DropdownButtonFormField<CattleType>(
-              value: _selectedType,
+              initialValue: _selectedType,
               decoration: const InputDecoration(labelText: 'Type'),
               items: CattleType.values.map((type) {
                 return DropdownMenuItem(
@@ -908,7 +908,7 @@ class _CattleScreenState extends State<CattleScreen> with TickerProviderStateMix
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<HealthStatus>(
-              value: _selectedHealth,
+              initialValue: _selectedHealth,
               decoration: const InputDecoration(labelText: 'Health Status'),
               items: HealthStatus.values.map((status) {
                 return DropdownMenuItem(

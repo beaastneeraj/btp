@@ -5,6 +5,8 @@ import '../providers/app_provider.dart';
 import 'inventory_form_screen.dart';
 
 class InventoryScreen extends StatefulWidget {
+  const InventoryScreen({super.key});
+
   @override
   State<InventoryScreen> createState() => _InventoryScreenState();
 }
@@ -128,7 +130,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 // Category Filter
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _selectedCategory,
+                    initialValue: _selectedCategory,
                     decoration: InputDecoration(
                       labelText: 'Category',
                       border: OutlineInputBorder(
@@ -149,7 +151,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 // Status Filter
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _selectedStatus,
+                    initialValue: _selectedStatus,
                     decoration: InputDecoration(
                       labelText: 'Status',
                       border: OutlineInputBorder(
@@ -174,7 +176,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 // Sort Dropdown
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _sortBy,
+                    initialValue: _sortBy,
                     decoration: InputDecoration(
                       labelText: 'Sort by',
                       border: OutlineInputBorder(

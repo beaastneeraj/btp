@@ -314,7 +314,7 @@ class PDFExportService {
               _buildTableCell('${field.sizeInAcres.toStringAsFixed(1)}'),
               _buildTableCell(field.location),
               _buildTableCell(field.soilType),
-            ])).toList(),
+            ])),
       ],
     );
   }
@@ -341,7 +341,7 @@ class PDFExportService {
               _buildTableCell(crop.variety),
               _buildTableCell(_formatDate(crop.plantingDate)),
               _buildTableCell(_formatDate(crop.expectedHarvestDate)),
-            ])).toList(),
+            ])),
       ],
     );
   }
@@ -368,7 +368,7 @@ class PDFExportService {
               _buildTableCell(expense.description),
               _buildTableCell(expense.category),
               _buildTableCell('\$${expense.amount.toStringAsFixed(2)}'),
-            ])).toList(),
+            ])),
       ],
     );
   }

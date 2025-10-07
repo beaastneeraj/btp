@@ -199,7 +199,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: selectedPeriod,
+                    initialValue: selectedPeriod,
                     decoration: InputDecoration(
                       labelText: 'Time Period',
                       border: OutlineInputBorder(
@@ -223,7 +223,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
                 const SizedBox(width: 16),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: selectedFarm,
+                    initialValue: selectedFarm,
                     decoration: InputDecoration(
                       labelText: 'Farm Location',
                       border: OutlineInputBorder(
@@ -481,7 +481,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
             ),
           ),
-        )).toList(),
+        )),
       ],
     );
   }
@@ -617,7 +617,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
                   ),
                 ],
               ),
-            )).toList(),
+            )),
           ],
         ),
       ),
@@ -928,14 +928,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style = const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Text(
                   subtitle,
-                  style: TextStyle(
+                  style = TextStyle(
                     fontSize: 12,
                     color: Colors.grey.shade600,
                   ),
@@ -945,7 +945,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
           ),
           Text(
             time,
-            style: TextStyle(
+            style = TextStyle(
               fontSize: 10,
               color: Colors.grey.shade500,
             ),

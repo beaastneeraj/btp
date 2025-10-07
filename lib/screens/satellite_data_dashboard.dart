@@ -8,7 +8,7 @@ import 'dart:math' as math;
 /// Revolutionary Satellite Data Dashboard
 /// Displays real-time satellite data with stunning 3D visualizations
 class SatelliteDataDashboard extends StatefulWidget {
-  const SatelliteDataDashboard({Key? key}) : super(key: key);
+  const SatelliteDataDashboard({super.key});
 
   @override
   _SatelliteDataDashboardState createState() => _SatelliteDataDashboardState();
@@ -832,7 +832,7 @@ class _SatelliteDataDashboardState extends State<SatelliteDataDashboard>
                         ),
                       ],
                     ),
-                  )).toList(),
+                  )),
                 ],
               ),
             ),
@@ -949,12 +949,12 @@ class Revolutionary3DCard extends StatefulWidget {
   final Duration animationDuration;
 
   const Revolutionary3DCard({
-    Key? key,
+    super.key,
     required this.child,
     this.depth = 10.0,
     this.shadowColor = Colors.black26,
     this.animationDuration = const Duration(milliseconds: 300),
-  }) : super(key: key);
+  });
 
   @override
   _Revolutionary3DCardState createState() => _Revolutionary3DCardState();
@@ -966,7 +966,7 @@ class _Revolutionary3DCardState extends State<Revolutionary3DCard>
   late Animation<double> _animation;
   
   Offset _offset = Offset.zero;
-  bool _isHovering = false;
+  final bool _isHovering = false;
 
   @override
   void initState() {
@@ -1061,12 +1061,12 @@ class CropHealthRing extends StatefulWidget {
   final double size;
 
   const CropHealthRing({
-    Key? key,
+    super.key,
     required this.percentage,
     required this.label,
     required this.color,
     this.size = 120,
-  }) : super(key: key);
+  });
 
   @override
   _CropHealthRingState createState() => _CropHealthRingState();

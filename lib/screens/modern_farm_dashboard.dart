@@ -708,7 +708,7 @@ class _ModernFarmDashboardState extends ConsumerState<ModernFarmDashboard>
 
   Widget _buildExpenseChart() {
     // Implementation for expense chart
-    return Container(
+    return SizedBox(
       height: 200,
       child: Center(child: Text('Expense Chart Placeholder')),
     );
@@ -716,7 +716,7 @@ class _ModernFarmDashboardState extends ConsumerState<ModernFarmDashboard>
 
   Widget _buildCategoryExpenseChart() {
     // Implementation for category expense chart
-    return Container(
+    return SizedBox(
       height: 200,
       child: Center(child: Text('Category Chart Placeholder')),
     );
@@ -757,11 +757,11 @@ class _ModernFarmDashboardState extends ConsumerState<ModernFarmDashboard>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              instrument.maintenance?.nextMaintenance.isBefore(
+              instrument.maintenance.nextMaintenance.isBefore(
                 DateTime.now().add(Duration(days: 30))) == true
                   ? Icons.warning
                   : Icons.check_circle,
-              color: instrument.maintenance?.nextMaintenance.isBefore(
+              color: instrument.maintenance.nextMaintenance.isBefore(
                 DateTime.now().add(Duration(days: 30))) == true
                   ? Colors.orange
                   : Colors.green,

@@ -79,5 +79,4 @@ flutter:
     - CSV Data/regional_configuration.json
     - CSV Data/mobile_app_database_schema.json
     - CSV Data/implementation_roadmap.json
-    - models/
     - assets/labels/

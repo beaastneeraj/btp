@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/crop_model.dart';
 import '../models/field_model.dart';
-import '../providers/app_provider.dart';
+import '../providers/theme_provider.dart';
 
 class CropFormScreen extends StatefulWidget {
   final CropModel? crop;
   final Function(CropModel) onSave;
 
   const CropFormScreen({
-    Key? key,
+    super.key,
     this.crop,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   State<CropFormScreen> createState() => _CropFormScreenState();
@@ -141,7 +141,7 @@ class _CropFormScreenState extends State<CropFormScreen> {
                             }
                             
                             return DropdownButtonFormField<FieldModel>(
-                              value: _selectedField,
+                              initialValue: _selectedField,
                               decoration: InputDecoration(
                                 labelText: 'Select Field *',
                                 prefixIcon: Icon(Icons.landscape),
@@ -173,7 +173,7 @@ class _CropFormScreenState extends State<CropFormScreen> {
                         
                         // Crop Name
                         DropdownButtonFormField<String>(
-                          value: _cropNameController.text.isEmpty ? null : _cropNameController.text,
+                          initialValue: _cropNameController.text.isEmpty ? null : _cropNameController.text,
                           decoration: InputDecoration(
                             labelText: 'Crop Name *',
                             prefixIcon: Icon(Icons.eco),
@@ -489,7 +489,7 @@ class _CropFormScreenState extends State<CropFormScreen> {
         variety: _varietyController.text.trim(),
         plantingDate: _plantingDate!,
         harvestDate: _harvestDate,
-        yield: _yieldController.text.trim().isNotEmpty 
+        yieldAmount: _yieldController.text.trim().isNotEmpty 
             ? double.tryParse(_yieldController.text.trim())
             : null,
       );

@@ -6,6 +6,8 @@ import 'dashboard_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -197,6 +199,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: _isLoading ? null : _signIn,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green.shade700,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  elevation: 4,
+                                ),
                                 child: _isLoading
                                     ? SizedBox(
                                         height: 20,
@@ -210,15 +221,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         'Sign In',
                                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                       ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green.shade700,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  elevation: 4,
-                                ),
                               ),
                             ),
                             SizedBox(height: 16),

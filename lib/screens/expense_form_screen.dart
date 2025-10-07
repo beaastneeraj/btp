@@ -9,10 +9,10 @@ class ExpenseFormScreen extends StatefulWidget {
   final Function(ExpenseModel) onSave;
 
   const ExpenseFormScreen({
-    Key? key,
+    super.key,
     this.expense,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   State<ExpenseFormScreen> createState() => _ExpenseFormScreenState();
@@ -52,14 +52,12 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       _selectedCategory = widget.expense!.category;
       
       // Find the selected field
-      if (widget.expense!.fieldId != null) {
-        final provider = Provider.of<AppProvider>(context, listen: false);
-        _selectedField = provider.fields.firstWhere(
-          (f) => f.id == widget.expense!.fieldId,
-          orElse: () => null,
-        );
-      }
-    } else {
+      final provider = Provider.of<AppProvider>(context, listen: false);
+      _selectedField = provider.fields.firstWhere(
+        (f) => f.id == widget.expense!.fieldId,
+        orElse: () => null,
+      );
+        } else {
       _selectedDate = DateTime.now();
     }
   }
@@ -189,7 +187,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                             Expanded(
                               flex: 2,
                               child: DropdownButtonFormField<String>(
-                                value: _selectedCategory,
+                                initialValue: _selectedCategory,
                                 decoration: InputDecoration(
                                   labelText: 'Category *',
                                   prefixIcon: Icon(Icons.category),
@@ -239,7 +237,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                         Consumer<AppProvider>(
                           builder: (context, provider, child) {
                             return DropdownButtonFormField<FieldModel>(
-                              value: _selectedField,
+                              initialValue: _selectedField,
                               decoration: InputDecoration(
                                 labelText: 'Field (Optional)',
                                 hintText: 'Select field if applicable',

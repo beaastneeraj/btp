@@ -10,6 +10,8 @@ import '../screens/iot_dashboard_screen.dart';
 import '../components/revolutionary_ui_components.dart';
 
 class ComprehensiveAgricultureApp extends StatefulWidget {
+  const ComprehensiveAgricultureApp({super.key});
+
   @override
   _ComprehensiveAgricultureAppState createState() => _ComprehensiveAgricultureAppState();
 }

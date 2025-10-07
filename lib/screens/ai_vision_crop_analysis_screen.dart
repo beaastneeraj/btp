@@ -208,14 +208,14 @@ class _AIVisionCropAnalysisScreenState extends ConsumerState<AIVisionCropAnalysi
   Widget _buildParameterSelection() {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+      color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
       child: Column(
         children: [
           Row(
             children: [
               Expanded(
                 child: DropdownButtonFormField<CropType>(
-                  value: _selectedCropType,
+                  initialValue: _selectedCropType,
                   onChanged: (value) => setState(() => _selectedCropType = value!),
                   decoration: const InputDecoration(
                     labelText: 'Crop Type',

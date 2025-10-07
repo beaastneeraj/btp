@@ -8,6 +8,8 @@ import '../widgets/error_widget.dart';
 import 'field_form_screen.dart';
 
 class FieldsScreen extends StatefulWidget {
+  const FieldsScreen({super.key});
+
   @override
   State<FieldsScreen> createState() => _FieldsScreenState();
 }

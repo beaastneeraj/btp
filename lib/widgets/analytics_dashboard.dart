@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AnalyticsDashboard extends StatelessWidget {
+  const AnalyticsDashboard({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(

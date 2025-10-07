@@ -201,12 +201,12 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
       }
     });
 
-    final categories = ['All', ...inventoryItems.map((e) => e.category).toSet().toList()];
+    final categories = ['All', ...inventoryItems.map((e) => e.category).toSet()];
     final lowStockCount = inventoryItems.where((item) => item.isLowStock).length;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
-      body: FadeTransition(
+      backgroundColor = colorScheme.surface,
+      body = FadeTransition(
         opacity: _fadeAnimation,
         child: SlideTransition(
           position: _slideAnimation,
@@ -310,7 +310,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                         // Search Bar
                         Container(
                           decoration: BoxDecoration(
-                            color: colorScheme.surfaceVariant.withOpacity(0.5),
+                            color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: colorScheme.outline.withOpacity(0.2),
@@ -363,7 +363,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                                           : colorScheme.onSurface,
                                     ),
                                   ),
-                                  backgroundColor: colorScheme.surfaceVariant,
+                                  backgroundColor: colorScheme.surfaceContainerHighest,
                                   selectedColor: colorScheme.primary,
                                   onSelected: (selected) {
                                     if (selected) {
@@ -447,7 +447,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           ),
         ),
       ),
-      floatingActionButton: ScaleTransition(
+      floatingActionButton = ScaleTransition(
         scale: _fabAnimationController,
         child: FloatingActionButton.extended(
           onPressed: () => _showAddItemDialog(context),
@@ -486,7 +486,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: isSelected ? colorScheme.primary : colorScheme.surfaceVariant,
+              color: isSelected ? colorScheme.primary : colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: isSelected ? colorScheme.primary : colorScheme.outline.withOpacity(0.3),
@@ -535,7 +535,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                     end: Alignment.bottomRight,
                     colors: [
                       colorScheme.surface,
-                      colorScheme.surfaceVariant.withOpacity(0.5),
+                      colorScheme.surfaceContainerHighest.withOpacity(0.5),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(20),
@@ -658,7 +658,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                                   const SizedBox(height: 4),
                                   LinearProgressIndicator(
                                     value: (item.quantity / (item.minQuantity * 2)).clamp(0.0, 1.0),
-                                    backgroundColor: colorScheme.surfaceVariant,
+                                    backgroundColor: colorScheme.surfaceContainerHighest,
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                       item.isLowStock ? Colors.orange : colorScheme.primary,
                                     ),
@@ -1175,7 +1175,7 @@ class _AddItemSheetState extends ConsumerState<_AddItemSheet> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: DropdownButtonFormField<String>(
-                    value: _selectedCategory,
+                    initialValue: _selectedCategory,
                     decoration: InputDecoration(
                       labelText: 'Category',
                       prefixIcon: Icon(Icons.category_rounded, color: colorScheme.primary),

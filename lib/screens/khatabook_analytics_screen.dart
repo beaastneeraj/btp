@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import '../models/khatabook_models.dart';
 
 class KhatabookAnalyticsScreen extends StatefulWidget {
-  const KhatabookAnalyticsScreen({Key? key}) : super(key: key);
+  const KhatabookAnalyticsScreen({super.key});
 
   @override
   State<KhatabookAnalyticsScreen> createState() => _KhatabookAnalyticsScreenState();
@@ -273,7 +273,7 @@ class _KhatabookAnalyticsScreenState extends State<KhatabookAnalyticsScreen>
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Container(
+                  SizedBox(
                     height: 200,
                     child: _buildProfitChart(),
                   ),

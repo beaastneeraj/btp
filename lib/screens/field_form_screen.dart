@@ -8,10 +8,10 @@ class FieldFormScreen extends StatefulWidget {
   final Function(FieldModel) onSave;
 
   const FieldFormScreen({
-    Key? key,
+    super.key,
     this.field,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   State<FieldFormScreen> createState() => _FieldFormScreenState();
@@ -169,7 +169,7 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                         
                         // Soil Type Dropdown
                         DropdownButtonFormField<String>(
-                          value: _soilTypeController.text.isEmpty ? null : _soilTypeController.text,
+                          initialValue: _soilTypeController.text.isEmpty ? null : _soilTypeController.text,
                           decoration: InputDecoration(
                             labelText: 'Soil Type *',
                             prefixIcon: Icon(Icons.terrain),

@@ -5,7 +5,7 @@ import '../models/khatabook_models.dart';
 class KhatabookCropFormScreen extends StatefulWidget {
   final Crop? crop; // For editing existing crops
 
-  const KhatabookCropFormScreen({Key? key, this.crop}) : super(key: key);
+  const KhatabookCropFormScreen({super.key, this.crop});
 
   @override
   State<KhatabookCropFormScreen> createState() => _KhatabookCropFormScreenState();
@@ -148,7 +148,7 @@ class _KhatabookCropFormScreenState extends State<KhatabookCropFormScreen> {
 
               // Crop Type
               DropdownButtonFormField<CropType>(
-                value: _selectedCropType,
+                initialValue: _selectedCropType,
                 decoration: const InputDecoration(
                   labelText: 'Crop Type',
                   prefixIcon: Icon(Icons.category),

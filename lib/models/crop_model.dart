@@ -5,7 +5,7 @@ class CropModel {
   final String variety;
   final DateTime plantingDate;
   final DateTime? harvestDate;
-  final double? yield;
+  final double? yieldAmount;
 
   CropModel({
     required this.id,
@@ -14,7 +14,7 @@ class CropModel {
     required this.variety,
     required this.plantingDate,
     this.harvestDate,
-    this.yield,
+    this.yieldAmount,
   });
 
   factory CropModel.fromJson(Map<String, dynamic> json) {
@@ -25,7 +25,7 @@ class CropModel {
       variety: json['variety'],
       plantingDate: DateTime.parse(json['plantingDate']),
       harvestDate: json['harvestDate'] != null ? DateTime.parse(json['harvestDate']) : null,
-      yield: json['yield']?.toDouble(),
+      yieldAmount: json['yieldAmount']?.toDouble(),
     );
   }
 
@@ -37,7 +37,7 @@ class CropModel {
       'variety': variety,
       'plantingDate': plantingDate.toIso8601String(),
       'harvestDate': harvestDate?.toIso8601String(),
-      'yield': yield,
+      'yieldAmount': yieldAmount,
     };
   }
 
@@ -48,7 +48,7 @@ class CropModel {
     String? variety,
     DateTime? plantingDate,
     DateTime? harvestDate,
-    double? yield,
+    double? yieldAmount,
   }) {
     return CropModel(
       id: id ?? this.id,
@@ -57,7 +57,7 @@ class CropModel {
       variety: variety ?? this.variety,
       plantingDate: plantingDate ?? this.plantingDate,
       harvestDate: harvestDate ?? this.harvestDate,
-      yield: yield ?? this.yield,
+      yieldAmount: yieldAmount ?? this.yieldAmount,
     );
   }
 }

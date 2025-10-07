@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CalendarWidget extends StatelessWidget {
   final List<DateTime> taskDates;
-  const CalendarWidget({required this.taskDates});
+  const CalendarWidget({super.key, required this.taskDates});
 
   @override
   Widget build(BuildContext context) {

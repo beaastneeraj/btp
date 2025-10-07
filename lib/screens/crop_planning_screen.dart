@@ -26,7 +26,7 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
     with TickerProviderStateMixin, AppAnimationMixin {
   late TabController _tabController;
   final PageController _pageController = PageController();
-  int _currentPageIndex = 0;
+  final int _currentPageIndex = 0;
 
   @override
   void initState() {
@@ -133,7 +133,7 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   if (isLoading && recommendations == null)
-                    Container(
+                    SizedBox(
                       height: 200,
                       child: Center(child: CircularProgressIndicator()),
                     )
@@ -175,7 +175,7 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
           scale: cardStaggerAnimation.value,
           child: Card(
             elevation: 2,
-            color: colorScheme.surfaceVariant,
+            color: colorScheme.surfaceContainerHighest,
             child: TabBar(
               controller: _tabController,
               tabs: const [
@@ -198,7 +198,7 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
   }
 
   Widget _buildTabContent(Map<String, dynamic> data) {
-    return Container(
+    return SizedBox(
       height: 600,
       child: TabBarView(
         controller: _tabController,
@@ -389,7 +389,7 @@ class _CropPlanningScreenState extends ConsumerState<CropPlanningScreen>
           
           // Soil Type
           DropdownButtonFormField<String>(
-            value: soilType,
+            initialValue: soilType,
             decoration: InputDecoration(
               labelText: 'Soil Type',
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),

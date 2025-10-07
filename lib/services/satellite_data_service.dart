@@ -735,12 +735,14 @@ class SatelliteDataService {
     double stress = 0.0;
     
     // NDVI-based stress
-    if (ndvi < 0.4) stress += 0.6;
-    else if (ndvi < 0.6) stress += 0.3;
+    if (ndvi < 0.4) {
+      stress += 0.6;
+    } else if (ndvi < 0.6) stress += 0.3;
     
     // Temperature stress
-    if (weather.temperature > 35) stress += 0.3;
-    else if (weather.temperature < 15) stress += 0.2;
+    if (weather.temperature > 35) {
+      stress += 0.3;
+    } else if (weather.temperature < 15) stress += 0.2;
     
     // Moisture stress
     if (weather.soilMoisture < 30) stress += 0.4;

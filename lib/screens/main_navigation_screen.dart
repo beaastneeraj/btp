@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'enhanced_dashboard_screen.dart';
-import 'smart_enhanced_dashboard_improved.dart';
-import 'khatabook_analytics_screen.dart';
-import 'weather_screen.dart';
-import 'market_prices_screen.dart';
+import 'comprehensive_dashboard_screen.dart';
+import 'enhanced_analytics_screen.dart';
 import 'crop_planning_screen.dart';
-import 'fields_screen.dart';
-import 'tasks_screen.dart';
 import 'inventory_screen.dart';
-import 'reports_screen.dart';
 import 'profile_screen.dart';
-import 'iot_devices_screen.dart';
 import '../providers/theme_provider.dart';
 import '../services/localization_service.dart';
 
@@ -51,10 +43,10 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     final screens = [
-      const SmartEnhancedDashboardScreen(),
+      const ComprehensiveDashboardScreen(),
       const InventoryScreen(),
       const CropPlanningScreen(),
-      KhatabookAnalyticsScreen(),
+      const EnhancedAnalyticsScreen(),
       const ProfileScreen(),
     ];
 
@@ -131,7 +123,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
               icon: const Icon(Icons.add),
               label: Text(
                 'addTransaction'.tr(languageCode),
-                style: GoogleFonts.roboto(
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -224,7 +216,7 @@ class SettingsScreen extends ConsumerWidget {
                         }
                       },
                     ),
-                  ).toList(),
+                  ),
                 ],
               ),
             ),
@@ -247,7 +239,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: appSettings.currency,
+                    initialValue: appSettings.currency,
                     decoration: InputDecoration(
                       labelText: 'currency'.tr(languageCode),
                       border: const OutlineInputBorder(),

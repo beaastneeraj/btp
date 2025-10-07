@@ -224,7 +224,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
     final colorScheme = Theme.of(context).colorScheme;
     final inventoryItems = ref.watch(inventoryItemsProvider);
     final filteredItems = _getFilteredItems();
-    final categories = ['All', ...inventoryItems.map((e) => e.category).toSet().toList()];
+    final categories = ['All', ...inventoryItems.map((e) => e.category).toSet()];
     final lowStockCount = inventoryItems.where((item) => item.isLowStock).length;
 
     return Scaffold(
@@ -326,7 +326,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                     margin: const EdgeInsets.all(16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: colorScheme.surfaceVariant.withOpacity(0.5),
+                      color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: colorScheme.outline.withOpacity(0.2),
@@ -384,7 +384,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                                     ),
                                   ),
                                   selected: isSelected,
-                                  backgroundColor: colorScheme.surfaceVariant,
+                                  backgroundColor: colorScheme.surfaceContainerHighest,
                                   selectedColor: colorScheme.primary,
                                   onSelected: (selected) {
                                     if (selected) {
@@ -502,7 +502,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           ),
         ),
         selected: isSelected,
-        backgroundColor: colorScheme.surfaceVariant,
+        backgroundColor: colorScheme.surfaceContainerHighest,
         selectedColor: colorScheme.primary,
         onSelected: (selected) {
           if (selected) {
@@ -779,7 +779,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 decoration: const InputDecoration(
                   labelText: 'Category',
                   border: OutlineInputBorder(),

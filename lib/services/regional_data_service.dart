@@ -11,11 +11,11 @@ class RegionalDataService {
   
   RegionalDataService._internal();
 
-  List<SoilData> _soilData = [];
-  List<CropCalendar> _cropCalendar = [];
-  List<HistoricalWeatherData> _weatherData = [];
-  List<InputCostData> _inputCosts = [];
-  Map<String, RegionalConfiguration> _regionalConfigs = {};
+  final List<SoilData> _soilData = [];
+  final List<CropCalendar> _cropCalendar = [];
+  final List<HistoricalWeatherData> _weatherData = [];
+  final List<InputCostData> _inputCosts = [];
+  final Map<String, RegionalConfiguration> _regionalConfigs = {};
   
   bool _isInitialized = false;
 

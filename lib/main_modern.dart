@@ -45,6 +45,8 @@ void main() async {
 }
 
 class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ScreenUtilInit(
@@ -135,7 +137,7 @@ class MyApp extends ConsumerWidget {
       // Input decoration theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colorScheme.surfaceVariant.withOpacity(0.5),
+        fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.5),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(FigmaDesignSystem.radiusM),
           borderSide: BorderSide.none,
@@ -340,7 +342,7 @@ class _SplashScreenState extends State<SplashScreen>
               const SizedBox(height: FigmaDesignSystem.spaceXXL),
               
               // Loading indicator
-              Container(
+              SizedBox(
                 width: 40,
                 height: 40,
                 child: CircularProgressIndicator(

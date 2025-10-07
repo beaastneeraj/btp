@@ -5,7 +5,7 @@ class InventoryAlertWidget extends StatelessWidget {
   final int stock;
   final int reorderLevel;
 
-  const InventoryAlertWidget({
+  const InventoryAlertWidget({super.key, 
     required this.itemName,
     required this.stock,
     required this.reorderLevel,

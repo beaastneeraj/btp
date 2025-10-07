@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
-import '../widgets/animated_widgets.dart';
 import '../providers/theme_provider.dart';
 import '../services/localization_service.dart';
 import 'khatabook_screen.dart';
@@ -10,12 +9,11 @@ import 'weather_screen.dart';
 import 'market_prices_screen.dart';
 import 'tasks_screen.dart';
 import 'inventory_screen.dart';
-import 'crop_planning_screen.dart';
-import 'ai_vision_crop_analysis_screen.dart';
+import 'enhanced_crop_planning_screen.dart';
 import 'dart:math' as math;
 import 'dart:async';
 
-// Enhanced Dashboard with Original Quick Actions and Voice Commands
+// Enhanced Dashboard focused on Crop Planning and Agriculture Management
 class SmartEnhancedDashboardScreen extends ConsumerStatefulWidget {
   const SmartEnhancedDashboardScreen({super.key});
 
@@ -34,13 +32,12 @@ class _SmartEnhancedDashboardScreenState extends ConsumerState<SmartEnhancedDash
   late Animation<double> _cardStaggerAnimation;
   late Animation<double> _floatingAnimation;
 
-  // State Management
-  bool _isVoiceListening = false;
-  String _voiceStatus = 'Ready';
-  int _connectedDevices = 5;
+  // State Management - Agricultural Data
   double _soilMoisture = 45.2;
-  double _ndviValue = 0.78;
   double _temperature = 28.5;
+  double _humidity = 65.0;
+  int _activeCrops = 8;
+  int _pendingTasks = 12;
   
   Timer? _dataUpdateTimer;
   
@@ -117,7 +114,7 @@ class _SmartEnhancedDashboardScreenState extends ConsumerState<SmartEnhancedDash
     if (mounted) {
       setState(() {
         _soilMoisture = 40 + (math.Random().nextDouble() * 20);
-        _ndviValue = 0.7 + (math.Random().nextDouble() * 0.2);
+        _humidity = 60 + (math.Random().nextDouble() * 20);
         _temperature = 25 + (math.Random().nextDouble() * 10);
       });
     }
@@ -254,7 +251,7 @@ class _SmartEnhancedDashboardScreenState extends ConsumerState<SmartEnhancedDash
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Smart Farm',
+                              'Crop Planning Dashboard',
                               style: GoogleFonts.roboto(
                                 color: Colors.white.withOpacity(0.9),
                                 fontSize: 16,
@@ -263,15 +260,15 @@ class _SmartEnhancedDashboardScreenState extends ConsumerState<SmartEnhancedDash
                             ),
                             Row(
                               children: [
-                                _buildStatusChip('5', Icons.devices, Colors.green, 'IoT'),
+                                _buildStatusChip('${_activeCrops}', Icons.eco, Colors.green, 'Active Crops'),
                                 SizedBox(width: 6),
-                                _buildStatusChip('●', Icons.circle, Colors.green, 'Ready'),
-                                SizedBox(width: 6),
-                                _buildStatusChip('📡', Icons.satellite_alt, Colors.blue, 'Satellite'),
+                                _buildStatusChip('${_pendingTasks}', Icons.task_alt, Colors.orange, 'Tasks'),
                                 SizedBox(width: 6),
                                 _buildStatusChip('${_temperature.toInt()}°C', Icons.thermostat, Colors.orange, 'Temp'),
                                 SizedBox(width: 6),
                                 _buildStatusChip('${_soilMoisture.toInt()}%', Icons.water_drop, Colors.blue, 'Soil'),
+                                SizedBox(width: 6),
+                                _buildStatusChip('${_humidity.toInt()}%', Icons.opacity, Colors.purple, 'Humidity'),
                               ],
                             ),
                           ],
@@ -369,10 +366,10 @@ class _SmartEnhancedDashboardScreenState extends ConsumerState<SmartEnhancedDash
               children: [
                 _buildFeatureCard(
                   'Crop Health',
-                  'AI-powered analysis',
+                  'Monitoring & Analysis',
                   Icons.eco,
                   colorScheme.primary,
-                  () => Navigator.push(context, MaterialPageRoute(builder: (_) => AIVisionCropAnalysisScreen())),
+                  () => Navigator.push(context, MaterialPageRoute(builder: (_) => EnhancedCropPlanningScreen())),
                   0.1,
                   languageCode,
                 ),
@@ -399,7 +396,7 @@ class _SmartEnhancedDashboardScreenState extends ConsumerState<SmartEnhancedDash
                   'Smart recommendations',
                   Icons.calendar_month,
                   colorScheme.error,
-                  () => Navigator.push(context, MaterialPageRoute(builder: (_) => CropPlanningScreen())),
+                  () => Navigator.push(context, MaterialPageRoute(builder: (_) => EnhancedCropPlanningScreen())),
                   0.4,
                   languageCode,
                 ),
@@ -499,10 +496,10 @@ class _SmartEnhancedDashboardScreenState extends ConsumerState<SmartEnhancedDash
             SizedBox(width: 12),
             Expanded(
               child: _buildDataCard(
-                'NDVI Index',
-                _ndviValue.toStringAsFixed(2),
-                '',
-                Icons.eco,
+                'Humidity',
+                _humidity.toStringAsFixed(1),
+                '%',
+                Icons.opacity,
                 colorScheme.secondary,
               ),
             ),
@@ -760,11 +757,11 @@ class _SmartEnhancedDashboardScreenState extends ConsumerState<SmartEnhancedDash
             return Transform.translate(
               offset: Offset(0, _floatingAnimation.value * 0.5),
               child: FloatingActionButton(
-                heroTag: "voice_command",
-                onPressed: _toggleVoiceListening,
-                backgroundColor: _isVoiceListening ? colorScheme.error : colorScheme.secondary,
+                heroTag: "tasks_button",
+                onPressed: _navigateToTasks,
+                backgroundColor: colorScheme.secondary,
                 child: Icon(
-                  _isVoiceListening ? Icons.mic : Icons.mic_none,
+                  Icons.task_alt,
                   color: Colors.white,
                 ),
               ),
@@ -936,40 +933,14 @@ class _SmartEnhancedDashboardScreenState extends ConsumerState<SmartEnhancedDash
     _showSuccessSnackBar('Data refreshed successfully!');
   }
 
-  Future<void> _toggleVoiceListening() async {
-    if (_isVoiceListening) {
-      setState(() {
-        _isVoiceListening = false;
-        _voiceStatus = 'Ready';
-      });
-    } else {
-      setState(() {
-        _isVoiceListening = true;
-        _voiceStatus = 'Listening...';
-      });
-
-      try {
-        await Future.delayed(Duration(seconds: 3));
-        
-        setState(() {
-          _isVoiceListening = false;
-          _voiceStatus = 'Processing...';
-        });
-        
-        await Future.delayed(Duration(seconds: 1));
-        
-        setState(() {
-          _voiceStatus = 'Ready';
-        });
-
-        _showSuccessSnackBar('Voice command: "Check soil moisture" - Current level: ${_soilMoisture.toInt()}%');
-      } catch (e) {
-        setState(() {
-          _isVoiceListening = false;
-          _voiceStatus = 'Error';
-        });
-        _showErrorSnackBar('Voice command failed: $e');
-      }
+  Future<void> _navigateToTasks() async {
+    try {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => TasksScreen()),
+      );
+    } catch (e) {
+      _showErrorSnackBar('Navigation failed: $e');
     }
   }
 

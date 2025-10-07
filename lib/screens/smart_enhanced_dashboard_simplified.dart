@@ -30,7 +30,7 @@ class _SmartEnhancedDashboardScreenState extends ConsumerState<SmartEnhancedDash
   // State Management
   bool _isVoiceListening = false;
   String _voiceStatus = 'Ready';
-  int _connectedDevices = 5;
+  final int _connectedDevices = 5;
   double _soilMoisture = 45.2;
   double _ndviValue = 0.78;
   double _temperature = 28.5;

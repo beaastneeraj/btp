@@ -60,7 +60,7 @@ class _ModernDashboardScreenState extends ConsumerState<ModernDashboardScreen>
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           // Modern animated app bar
@@ -495,7 +495,7 @@ class _ModernCropMonitoringScreenState extends State<ModernCropMonitoringScreen>
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(

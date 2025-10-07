@@ -325,7 +325,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 ref.read(appSettingsProvider.notifier).toggleDarkMode();
                 HapticFeedback.lightImpact();
               },
-              activeColor: appSettings.isDarkMode ? Colors.blue : Colors.green,
+              activeThumbColor: appSettings.isDarkMode ? Colors.blue : Colors.green,
             ),
             appSettings: appSettings,
           ),

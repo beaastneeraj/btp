@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import '../providers/theme_provider.dart';
-import '../services/localization_service.dart';
 import '../widgets/animated_widgets.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {

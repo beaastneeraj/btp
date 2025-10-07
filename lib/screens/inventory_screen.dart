@@ -250,7 +250,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
       animation: cardStaggerAnimation,
       child: Card(
         elevation: 2,
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -439,7 +439,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
               Container(
                 height: 6,
                 decoration: BoxDecoration(
-                  color: colorScheme.surfaceVariant,
+                  color: colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: FractionallySizedBox(

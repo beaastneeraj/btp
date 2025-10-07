@@ -5,6 +5,8 @@ import '../providers/app_provider.dart';
 import 'expense_form_screen.dart';
 
 class ExpensesScreen extends StatefulWidget {
+  const ExpensesScreen({super.key});
+
   @override
   State<ExpensesScreen> createState() => _ExpensesScreenState();
 }
@@ -116,7 +118,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                 // Category Filter
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _selectedCategory,
+                    initialValue: _selectedCategory,
                     decoration: InputDecoration(
                       labelText: 'Category',
                       border: OutlineInputBorder(
@@ -137,7 +139,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                 // Sort Dropdown
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _sortBy,
+                    initialValue: _sortBy,
                     decoration: InputDecoration(
                       labelText: 'Sort by',
                       border: OutlineInputBorder(
@@ -316,34 +318,34 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                   ),
                 ],
                 
-                if (expense.fieldId != null) ...[
-                  SizedBox(height: 8),
-                  Consumer<AppProvider>(
-                    builder: (context, provider, child) {
-                      final field = provider.fields.firstWhere(
-                        (f) => f.id == expense.fieldId,
-                        orElse: () => provider.fields.isNotEmpty ? provider.fields.first : null,
-                      );
-                      if (field != null) {
-                        return Row(
-                          children: [
-                            Icon(Icons.landscape, size: 16, color: Colors.green[600]),
-                            SizedBox(width: 4),
-                            Text(
-                              'Field: ${field.name}',
-                              style: TextStyle(
-                                color: Colors.green[600],
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
+                ...[
+                SizedBox(height: 8),
+                Consumer<AppProvider>(
+                  builder: (context, provider, child) {
+                    final field = provider.fields.firstWhere(
+                      (f) => f.id == expense.fieldId,
+                      orElse: () => provider.fields.isNotEmpty ? provider.fields.first : null,
+                    );
+                    if (field != null) {
+                      return Row(
+                        children: [
+                          Icon(Icons.landscape, size: 16, color: Colors.green[600]),
+                          SizedBox(width: 4),
+                          Text(
+                            'Field: ${field.name}',
+                            style: TextStyle(
+                              color: Colors.green[600],
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
-                          ],
-                        );
-                      }
-                      return SizedBox.shrink();
-                    },
-                  ),
-                ],
+                          ),
+                        ],
+                      );
+                    }
+                    return SizedBox.shrink();
+                  },
+                ),
+              ],
               ],
             ),
           ),
@@ -525,7 +527,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                     ),
                   ],
                 ),
-              )).toList(),
+              )),
             ],
           ),
         ),

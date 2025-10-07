@@ -9,6 +9,8 @@ void main() {
 }
 
 class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return DynamicColorBuilder(
@@ -137,6 +139,8 @@ class MyApp extends ConsumerWidget {
 }
 
 class SplashScreen extends ConsumerStatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }

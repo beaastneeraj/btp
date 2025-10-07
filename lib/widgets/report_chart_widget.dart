@@ -5,7 +5,7 @@ class ReportChartWidget extends StatelessWidget {
   final List<double> data;
   final List<String> labels;
 
-  const ReportChartWidget({required this.title, required this.data, required this.labels});
+  const ReportChartWidget({super.key, required this.title, required this.data, required this.labels});
 
   @override
   Widget build(BuildContext context) {

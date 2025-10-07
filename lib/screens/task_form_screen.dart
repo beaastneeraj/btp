@@ -344,7 +344,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     String Function(String?)? displayText,
   }) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
@@ -437,7 +437,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               Switch(
                 value: _reminderEnabled,
                 onChanged: (value) => setState(() => _reminderEnabled = value),
-                activeColor: const Color(0xFF2E7D32),
+                activeThumbColor: const Color(0xFF2E7D32),
               ),
             ],
           ),
@@ -449,7 +449,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: DropdownButtonFormField<int>(
-                    value: _reminderHours,
+                    initialValue: _reminderHours,
                     onChanged: (value) => setState(() => _reminderHours = value!),
                     items: const [
                       DropdownMenuItem(value: 1, child: Text('1 hour before')),

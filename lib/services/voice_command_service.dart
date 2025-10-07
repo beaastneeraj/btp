@@ -224,10 +224,9 @@ class VoiceCommandService {
       final humidity = 60 + (DateTime.now().millisecondsSinceEpoch % 20);
       final rainfall = DateTime.now().hour > 12 ? 'बारिश की संभावना' : 'साफ मौसम';
       
-      final response = _getResponse('weather_good', command.languageCode)
+      final response = '${_getResponse('weather_good', command.languageCode)
           .replaceAll('{temp}', temperature.toString())
-          .replaceAll('{location}', location)
-          + ' आर्द्रता $humidity% है। $rainfall है।';
+          .replaceAll('{location}', location)} आर्द्रता $humidity% है। $rainfall है।';
       
       await _speakResponse(response, command.languageCode);
       
@@ -271,10 +270,9 @@ class VoiceCommandService {
       final price = priceData[commodity] ?? 2000 + (DateTime.now().millisecondsSinceEpoch % 1000);
       final trend = DateTime.now().hour % 2 == 0 ? 'बढ़ रहे हैं' : 'स्थिर हैं';
       
-      final response = _getResponse('price_info', command.languageCode)
+      final response = '${_getResponse('price_info', command.languageCode)
           .replaceAll('{crop}', commodity)
-          .replaceAll('{price}', price.toString())
-          + ' भाव $trend।';
+          .replaceAll('{price}', price.toString())} भाव $trend।';
       
       await _speakResponse(response, command.languageCode);
       
@@ -311,9 +309,8 @@ class VoiceCommandService {
               ? 'कल सिंचाई करें' 
               : 'अभी सिंचाई की जरूरत नहीं';
       
-      final response = _getResponse('irrigation_advice', command.languageCode)
-          .replaceAll('{moisture}', moisture.toString())
-          + ' $recommendation।';
+      final response = '${_getResponse('irrigation_advice', command.languageCode)
+          .replaceAll('{moisture}', moisture.toString())} $recommendation।';
       
       await _speakResponse(response, command.languageCode);
       

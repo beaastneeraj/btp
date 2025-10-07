@@ -6,7 +6,7 @@ import 'khatabook_crop_form_screen.dart';
 import 'khatabook_analytics_screen.dart';
 
 class KhatabookScreen extends StatefulWidget {
-  const KhatabookScreen({Key? key}) : super(key: key);
+  const KhatabookScreen({super.key});
 
   @override
   State<KhatabookScreen> createState() => _KhatabookScreenState();
@@ -18,7 +18,7 @@ class _KhatabookScreenState extends State<KhatabookScreen>
   String _selectedPeriod = 'This Month';
   List<Transaction> _transactions = [];
   List<Crop> _crops = [];
-  List<Budget> _budgets = [];
+  final List<Budget> _budgets = [];
   
   // Sample data for demonstration
   double _totalIncome = 45000;
@@ -379,7 +379,7 @@ class _KhatabookScreenState extends State<KhatabookScreen>
                   const SizedBox(height: 16),
                   ..._transactions.take(3).map((transaction) =>
                     _buildActivityItem(transaction)
-                  ).toList(),
+                  ),
                 ],
               ),
             ),
@@ -408,7 +408,7 @@ class _KhatabookScreenState extends State<KhatabookScreen>
                     DropdownMenuItem(value: 'income', child: Text('Income')),
                     DropdownMenuItem(value: 'expense', child: Text('Expense')),
                   ],
-                  value: 'all',
+                  initialValue: 'all',
                   onChanged: (value) {},
                 ),
               ),
@@ -426,7 +426,7 @@ class _KhatabookScreenState extends State<KhatabookScreen>
                       child: Text(crop.name),
                     )),
                   ],
-                  value: 'all',
+                  initialValue: 'all',
                   onChanged: (value) {},
                 ),
               ),
@@ -646,7 +646,7 @@ class _KhatabookScreenState extends State<KhatabookScreen>
           const SizedBox(height: 16),
           
           // Tips List
-          ...tips.map((tip) => _buildTipCard(tip)).toList(),
+          ...tips.map((tip) => _buildTipCard(tip)),
         ],
       ),
     );

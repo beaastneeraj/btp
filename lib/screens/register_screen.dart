@@ -5,6 +5,8 @@ import '../providers/app_provider.dart';
 import 'dashboard_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -278,6 +280,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _register,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green.shade700,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            elevation: 4,
+                          ),
                           child: _isLoading
                               ? SizedBox(
                                   height: 20,
@@ -291,15 +302,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   'Create Account',
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green.shade700,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            elevation: 4,
-                          ),
                         ),
                       ),
                       SizedBox(height: 16),

@@ -26,7 +26,7 @@ class _EnhancedCropRecommendationScreenState
 
   String _selectedExperience = 'intermediate';
   String _selectedMarketPreference = 'local';
-  List<String> _selectedPreviousCrops = [];
+  final List<String> _selectedPreviousCrops = [];
   
   Map<String, dynamic>? _recommendations;
   bool _isLoading = false;

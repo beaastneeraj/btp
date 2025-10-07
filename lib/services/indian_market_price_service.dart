@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:http/http.dart' as http;
-import 'package:geolocator/geolocator.dart';
 
 class IndianMarketPriceService {
   static IndianMarketPriceService? _instance;

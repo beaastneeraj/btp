@@ -1,10 +1,7 @@
-import 'dart:io' if (dart.library.html) 'dart:html' as io;
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
 import 'package:camera/camera.dart';
-import 'package:image_picker/image_picker.dart';
 import '../models/ai_vision_models.dart';
 
 // Web-compatible TensorFlow Lite alternative

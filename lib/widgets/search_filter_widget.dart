@@ -5,7 +5,7 @@ class SearchFilterWidget extends StatelessWidget {
   final List<String> filters;
   final ValueChanged<String> onFilter;
 
-  const SearchFilterWidget({required this.onSearch, required this.filters, required this.onFilter});
+  const SearchFilterWidget({super.key, required this.onSearch, required this.filters, required this.onFilter});
 
   @override
   Widget build(BuildContext context) {

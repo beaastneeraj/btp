@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/services.dart';
-import '../widgets/animated_widgets.dart';
-import 'ai_vision_crop_analysis_screen.dart';
-import 'dart:math' as math;
+import 'package:intl/intl.dart';
+import '../providers/crop_provider.dart';
+import '../providers/inventory_provider.dart';
+import '../services/enhanced_weather_service.dart';
+import '../themes/material3_theme.dart';
+import 'enhanced_crop_form_screen.dart';
+import 'enhanced_weather_screen.dart';
+import 'enhanced_analytics_screen.dart';
+import 'inventory_screen.dart';
 
 // Enhanced Dashboard with Animations and Mobile Optimization
 class EnhancedDashboardScreen extends ConsumerStatefulWidget {
@@ -25,7 +29,7 @@ class _EnhancedDashboardScreenState extends ConsumerState<EnhancedDashboardScree
   late Animation<double> _cardStaggerAnimation;
   late Animation<double> _floatingAnimation;
 
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
   
   @override
   void initState() {

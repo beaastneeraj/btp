@@ -499,8 +499,9 @@ class IndianWeatherService {
     
     // Recent precipitation affects field conditions
     final recentRain = forecast.take(3).fold(0.0, (sum, day) => sum + day.precipitation);
-    if (recentRain > 20) score -= 0.5;
-    else if (recentRain > 10) score -= 0.3;
+    if (recentRain > 20) {
+      score -= 0.5;
+    } else if (recentRain > 10) score -= 0.3;
     
     // High humidity affects field work
     if (current.humidity > 90) score -= 0.2;
@@ -515,12 +516,14 @@ class IndianWeatherService {
     double stress = 0.0;
     
     // Heat stress
-    if (current.temperature > 35) stress += 0.4;
-    else if (current.temperature > 30) stress += 0.2;
+    if (current.temperature > 35) {
+      stress += 0.4;
+    } else if (current.temperature > 30) stress += 0.2;
     
     // Cold stress
-    if (current.temperature < 5) stress += 0.4;
-    else if (current.temperature < 10) stress += 0.2;
+    if (current.temperature < 5) {
+      stress += 0.4;
+    } else if (current.temperature < 10) stress += 0.2;
     
     // Water stress (no rain for extended period)
     final avgPrecipitation = forecast.take(7).fold(0.0, (sum, day) => sum + day.precipitation) / 7;

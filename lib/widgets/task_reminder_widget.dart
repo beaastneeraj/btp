@@ -4,7 +4,7 @@ class TaskReminderWidget extends StatelessWidget {
   final String title;
   final String dueDate;
 
-  const TaskReminderWidget({
+  const TaskReminderWidget({super.key, 
     required this.title,
     required this.dueDate,
   });

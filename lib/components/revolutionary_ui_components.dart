@@ -19,7 +19,7 @@ class NeumorphicContainer extends StatelessWidget {
   final double intensity;
 
   const NeumorphicContainer({
-    Key? key,
+    super.key,
     this.child,
     this.width,
     this.height,
@@ -30,7 +30,7 @@ class NeumorphicContainer extends StatelessWidget {
     this.isPressed = false,
     this.onTap,
     this.intensity = 1.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +104,7 @@ class GlassmorphicCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const GlassmorphicCard({
-    Key? key,
+    super.key,
     required this.child,
     this.width,
     this.height,
@@ -114,7 +114,7 @@ class GlassmorphicCard extends StatelessWidget {
     this.opacity = 0.15,
     this.backgroundColor = Colors.white,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -169,14 +169,14 @@ class Parallax3DCard extends StatefulWidget {
   final VoidCallback? onTap;
 
   const Parallax3DCard({
-    Key? key,
+    super.key,
     required this.child,
     this.width,
     this.height,
     this.perspective = 0.001,
     this.maxRotation = 0.1,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   _Parallax3DCardState createState() => _Parallax3DCardState();
@@ -308,7 +308,7 @@ class AnimatedCounterCard extends StatefulWidget {
   final VoidCallback? onTap;
 
   const AnimatedCounterCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.value,
     required this.unit,
@@ -316,7 +316,7 @@ class AnimatedCounterCard extends StatefulWidget {
     required this.color,
     this.animationDuration = const Duration(milliseconds: 2000),
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   _AnimatedCounterCardState createState() => _AnimatedCounterCardState();
@@ -453,14 +453,14 @@ class LiquidProgressIndicator extends StatefulWidget {
   final String? label;
 
   const LiquidProgressIndicator({
-    Key? key,
+    super.key,
     required this.value,
     this.backgroundColor = const Color(0xFF2A2A2A),
     this.valueColor = Colors.blue,
     this.height = 8,
     this.borderRadius = 4,
     this.label,
-  }) : super(key: key);
+  });
 
   @override
   _LiquidProgressIndicatorState createState() => _LiquidProgressIndicatorState();
@@ -608,13 +608,13 @@ class PulsingButton extends StatefulWidget {
   final Duration pulseDuration;
 
   const PulsingButton({
-    Key? key,
+    super.key,
     required this.child,
     this.onPressed,
     this.color = Colors.blue,
     this.size = 60,
     this.pulseDuration = const Duration(seconds: 2),
-  }) : super(key: key);
+  });
 
   @override
   _PulsingButtonState createState() => _PulsingButtonState();
@@ -738,12 +738,12 @@ class BreathingCard extends StatefulWidget {
   final double maxScale;
 
   const BreathingCard({
-    Key? key,
+    super.key,
     required this.child,
     this.breathingDuration = const Duration(seconds: 4),
     this.minScale = 0.98,
     this.maxScale = 1.02,
-  }) : super(key: key);
+  });
 
   @override
   _BreathingCardState createState() => _BreathingCardState();
@@ -800,14 +800,14 @@ class GradientBorderContainer extends StatelessWidget {
   final VoidCallback? onTap;
 
   const GradientBorderContainer({
-    Key? key,
+    super.key,
     required this.child,
     required this.gradientColors,
     this.borderWidth = 2,
     this.borderRadius = 16,
     this.padding,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -843,13 +843,13 @@ class ParticleField extends StatefulWidget {
   final Duration animationDuration;
 
   const ParticleField({
-    Key? key,
+    super.key,
     this.particleCount = 50,
     this.particleColor = Colors.white,
     this.maxParticleSize = 4,
     this.minParticleSize = 1,
     this.animationDuration = const Duration(seconds: 10),
-  }) : super(key: key);
+  });
 
   @override
   _ParticleFieldState createState() => _ParticleFieldState();
@@ -975,12 +975,12 @@ class WaveformVisualizer extends StatefulWidget {
   final Duration animationDuration;
 
   const WaveformVisualizer({
-    Key? key,
+    super.key,
     required this.data,
     this.waveColor = Colors.blue,
     this.height = 100,
     this.animationDuration = const Duration(milliseconds: 500),
-  }) : super(key: key);
+  });
 
   @override
   _WaveformVisualizerState createState() => _WaveformVisualizerState();

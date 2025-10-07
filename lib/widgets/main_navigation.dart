@@ -171,23 +171,23 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     } else if (_currentIndex == 1) { // Fields
       return FloatingActionButton(
         onPressed: () => _navigateToAddField(),
-        child: const Icon(Icons.add),
         backgroundColor: AppTheme.accentGreen,
         foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
       );
     } else if (_currentIndex == 2) { // Cattle
       return FloatingActionButton(
         onPressed: () => _navigateToAddCattle(),
-        child: const Icon(Icons.add),
         backgroundColor: AppTheme.primaryBlue,
         foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
       );
     } else if (_currentIndex == 3) { // Irrigation
       return FloatingActionButton(
         onPressed: () => _navigateToAddIrrigation(),
-        child: const Icon(Icons.add),
         backgroundColor: AppTheme.accentBlue,
         foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
       );
     }
     return null;

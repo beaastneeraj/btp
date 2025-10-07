@@ -8,10 +8,10 @@ class InventoryFormScreen extends StatefulWidget {
   final Function(InventoryModel) onSave;
 
   const InventoryFormScreen({
-    Key? key,
+    super.key,
     this.item,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   State<InventoryFormScreen> createState() => _InventoryFormScreenState();
@@ -195,7 +195,7 @@ class _InventoryFormScreenState extends State<InventoryFormScreen> {
                             Expanded(
                               flex: 1,
                               child: DropdownButtonFormField<String>(
-                                value: _selectedUnit,
+                                initialValue: _selectedUnit,
                                 decoration: InputDecoration(
                                   labelText: 'Unit *',
                                   border: OutlineInputBorder(
@@ -217,7 +217,7 @@ class _InventoryFormScreenState extends State<InventoryFormScreen> {
                         
                         // Category
                         DropdownButtonFormField<String>(
-                          value: _selectedCategory,
+                          initialValue: _selectedCategory,
                           decoration: InputDecoration(
                             labelText: 'Category *',
                             prefixIcon: Icon(Icons.category),

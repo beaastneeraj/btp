@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:material_color_utilities/material_color_utilities.dart';
 
 /// Advanced Design System inspired by Figma and Material You 3.0
 class FigmaDesignSystem {

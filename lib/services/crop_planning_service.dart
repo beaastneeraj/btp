@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:math';
-import 'package:http/http.dart' as http;
 import '../services/weather_service.dart';
 import '../services/market_data_service.dart';
 

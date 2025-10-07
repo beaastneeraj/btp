@@ -42,13 +42,13 @@ class _SmartEnhancedDashboardScreenState extends ConsumerState<SmartEnhancedDash
   bool _isVoiceListening = false;
   String _voiceStatus = 'Ready';
   List<IoTDevice> _iotDevices = [];
-  Map<String, IoTSensorData> _latestSensorData = {};
+  final Map<String, IoTSensorData> _latestSensorData = {};
   Map<String, dynamic>? _latestSatelliteData;
   
   late StreamSubscription _iotDataSubscription;
   Timer? _dataUpdateTimer;
 
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
   
   @override
   void initState() {

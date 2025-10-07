@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalizationService {
   static const Map<String, Map<String, String>> _localizedValues = {

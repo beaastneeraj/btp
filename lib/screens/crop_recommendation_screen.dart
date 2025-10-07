@@ -255,7 +255,7 @@ class _CropRecommendationScreenState extends ConsumerState<CropRecommendationScr
       builder: (context, ref, child) {
         final selectedSeason = ref.watch(selectedSeasonProvider);
         return DropdownButtonFormField<String>(
-          value: selectedSeason,
+          initialValue: selectedSeason,
           decoration: InputDecoration(
             labelText: 'Season',
             prefixIcon: Icon(Icons.calendar_month, color: isDark ? Colors.blue : Colors.green),
@@ -287,7 +287,7 @@ class _CropRecommendationScreenState extends ConsumerState<CropRecommendationScr
       builder: (context, ref, child) {
         final selectedMonth = ref.watch(selectedMonthProvider);
         return DropdownButtonFormField<int>(
-          value: selectedMonth,
+          initialValue: selectedMonth,
           decoration: InputDecoration(
             labelText: 'Month',
             prefixIcon: Icon(Icons.date_range, color: isDark ? Colors.blue : Colors.green),
@@ -314,7 +314,7 @@ class _CropRecommendationScreenState extends ConsumerState<CropRecommendationScr
       builder: (context, ref, child) {
         final selectedSoilType = ref.watch(selectedSoilTypeProvider);
         return DropdownButtonFormField<String>(
-          value: selectedSoilType,
+          initialValue: selectedSoilType,
           decoration: InputDecoration(
             labelText: 'Soil Type',
             prefixIcon: Icon(Icons.terrain, color: isDark ? Colors.blue : Colors.green),
@@ -341,7 +341,7 @@ class _CropRecommendationScreenState extends ConsumerState<CropRecommendationScr
       builder: (context, ref, child) {
         final selectedWaterReq = ref.watch(selectedWaterReqProvider);
         return DropdownButtonFormField<String>(
-          value: selectedWaterReq,
+          initialValue: selectedWaterReq,
           decoration: InputDecoration(
             labelText: 'Water Availability',
             prefixIcon: Icon(Icons.water_drop, color: isDark ? Colors.blue : Colors.green),

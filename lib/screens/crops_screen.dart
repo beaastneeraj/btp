@@ -8,6 +8,8 @@ import '../widgets/error_widget.dart';
 import 'crop_form_screen.dart';
 
 class CropsScreen extends StatefulWidget {
+  const CropsScreen({super.key});
+
   @override
   State<CropsScreen> createState() => _CropsScreenState();
 }

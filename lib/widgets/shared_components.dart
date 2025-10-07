@@ -141,7 +141,7 @@ class StandardAppBar extends StatelessWidget {
   final ColorScheme colorScheme;
 
   const StandardAppBar({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.icon,
@@ -150,7 +150,7 @@ class StandardAppBar extends StatelessWidget {
     required this.fadeAnimation,
     required this.colorScheme,
     this.actions,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -259,12 +259,12 @@ class StandardStatusChip extends StatelessWidget {
   final VoidCallback? onTap;
 
   const StandardStatusChip({
-    Key? key,
+    super.key,
     required this.label,
     required this.icon,
     required this.color,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -303,11 +303,11 @@ class AnimatedCard extends StatelessWidget {
   final int delay;
 
   const AnimatedCard({
-    Key? key,
+    super.key,
     required this.child,
     required this.animation,
     this.delay = 0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -335,13 +335,13 @@ class StandardFloatingActionButton extends StatelessWidget {
   final ColorScheme colorScheme;
 
   const StandardFloatingActionButton({
-    Key? key,
+    super.key,
     required this.label,
     required this.icon,
     required this.onPressed,
     required this.animation,
     required this.colorScheme,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:btp/screens/simple_dashboard.dart';
 
 class AuthenticationScreen extends ConsumerStatefulWidget {
+  const AuthenticationScreen({super.key});
+
   @override
   ConsumerState<AuthenticationScreen> createState() => _AuthenticationScreenState();
 }

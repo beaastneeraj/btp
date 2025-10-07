@@ -360,7 +360,7 @@ class _MarketPricesScreenState extends ConsumerState<MarketPricesScreen> {
       children: [
         Expanded(
           child: DropdownButtonFormField<String>(
-            value: ref.watch(selectedCropProvider),
+            initialValue: ref.watch(selectedCropProvider),
             decoration: InputDecoration(
               labelText: 'Select Crop',
               border: OutlineInputBorder(
@@ -382,7 +382,7 @@ class _MarketPricesScreenState extends ConsumerState<MarketPricesScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: DropdownButtonFormField<String>(
-            value: ref.watch(selectedMarketProvider),
+            initialValue: ref.watch(selectedMarketProvider),
             decoration: InputDecoration(
               labelText: 'Select Market',
               border: OutlineInputBorder(
@@ -584,7 +584,7 @@ class _MarketPricesScreenState extends ConsumerState<MarketPricesScreen> {
                             ),
                           ],
                         ),
-                      )).toList(),
+                      )),
                     ],
                   ),
                 ),
@@ -638,7 +638,7 @@ class _MarketPricesScreenState extends ConsumerState<MarketPricesScreen> {
                             ),
                           ],
                         ),
-                      )).toList(),
+                      )),
                     ],
                   ),
                 ),

@@ -7,10 +7,10 @@ class TransactionFormScreen extends StatefulWidget {
   final Transaction? transaction; // For editing existing transactions
 
   const TransactionFormScreen({
-    Key? key,
+    super.key,
     required this.type,
     this.transaction,
-  }) : super(key: key);
+  });
 
   @override
   State<TransactionFormScreen> createState() => _TransactionFormScreenState();
@@ -236,7 +236,7 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
               
               // Crop Selection
               DropdownButtonFormField<String>(
-                value: _selectedCropId,
+                initialValue: _selectedCropId,
                 decoration: const InputDecoration(
                   labelText: 'Related Crop (Optional)',
                   prefixIcon: Icon(Icons.agriculture),
@@ -264,7 +264,7 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
               // Category Selection
               if (isIncome) ...[
                 DropdownButtonFormField<IncomeCategory>(
-                  value: _selectedIncomeCategory,
+                  initialValue: _selectedIncomeCategory,
                   decoration: const InputDecoration(
                     labelText: 'Income Category',
                     prefixIcon: Icon(Icons.category),
@@ -288,7 +288,7 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                 ),
               ] else ...[
                 DropdownButtonFormField<ExpenseCategory>(
-                  value: _selectedExpenseCategory,
+                  initialValue: _selectedExpenseCategory,
                   decoration: const InputDecoration(
                     labelText: 'Expense Category',
                     prefixIcon: Icon(Icons.category),
