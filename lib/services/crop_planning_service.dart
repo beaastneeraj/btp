@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import '../services/weather_service.dart';
 import '../services/market_data_service.dart';
+import '../services/csv_data_service.dart';
 
 class CropPlanningService {
   static final CropPlanningService _instance = CropPlanningService._internal();
@@ -11,6 +12,7 @@ class CropPlanningService {
 
   final WeatherService _weatherService = WeatherService();
   final MarketDataService _marketService = MarketDataService();
+  final CsvDataService _csvDataService = CsvDataService();
 
   // Comprehensive crop database with scientific data
   static const Map<String, Map<String, dynamic>> _cropDatabase = {
@@ -230,6 +232,260 @@ class CropPlanningService {
         'Monitor for yellow mosaic virus',
         'Apply phosphorus at sowing time',
         'Harvest when pods turn brown'
+      ]
+    },
+    'chickpea': {
+      'name': 'Chickpea',
+      'hindiName': 'चना',
+      'season': 'Rabi',
+      'plantingMonths': [10, 11],
+      'harvestMonths': [3, 4],
+      'duration': 120,
+      'waterRequirement': 'Low',
+      'soilType': ['Loamy', 'Clay Loam', 'Black Cotton'],
+      'soilPH': [6.0, 7.5],
+      'temperature': {'min': 10, 'max': 30, 'optimal': 20},
+      'yield': {'min': 15, 'max': 25, 'average': 20},
+      'spacing': {'rows': 30, 'plants': 10},
+      'fertilizer': {'n': 20, 'p': 60, 'k': 30},
+      'diseases': ['Wilt', 'Blight', 'Root Rot'],
+      'pests': ['Pod Borer', 'Cutworm', 'Aphids'],
+      'marketPrice': {'min': 4500, 'max': 6000, 'current': 5250},
+      'profitability': 'High',
+      'riskLevel': 'Low',
+      'irrigationFrequency': 2,
+      'stages': [
+        {'name': 'Sowing', 'days': '0-7', 'description': 'Seed planting'},
+        {'name': 'Germination', 'days': '7-15', 'description': 'Seedling emergence'},
+        {'name': 'Vegetative', 'days': '15-50', 'description': 'Branch and leaf development'},
+        {'name': 'Flowering', 'days': '50-70', 'description': 'Flower formation'},
+        {'name': 'Pod Formation', 'days': '70-95', 'description': 'Pod development'},
+        {'name': 'Maturity', 'days': '95-120', 'description': 'Ready for harvest'}
+      ],
+      'tips': [
+        'Seed treatment with Rhizobium culture',
+        'Drought tolerant but needs moisture at flowering',
+        'Protect from pod borer during pod formation',
+        'Harvest when 90% pods turn brown',
+        'Good for crop rotation with cereals'
+      ]
+    },
+    'mustard': {
+      'name': 'Mustard',
+      'hindiName': 'सरसों',
+      'season': 'Rabi',
+      'plantingMonths': [10, 11],
+      'harvestMonths': [2, 3],
+      'duration': 110,
+      'waterRequirement': 'Low',
+      'soilType': ['Loamy', 'Sandy Loam'],
+      'soilPH': [6.0, 7.5],
+      'temperature': {'min': 10, 'max': 25, 'optimal': 18},
+      'yield': {'min': 12, 'max': 20, 'average': 16},
+      'spacing': {'rows': 30, 'plants': 10},
+      'fertilizer': {'n': 80, 'p': 40, 'k': 20},
+      'diseases': ['Alternaria Blight', 'White Rust', 'Downy Mildew'],
+      'pests': ['Aphids', 'Painted Bug', 'Sawfly'],
+      'marketPrice': {'min': 5000, 'max': 6500, 'current': 5750},
+      'profitability': 'High',
+      'riskLevel': 'Low',
+      'irrigationFrequency': 3,
+      'stages': [
+        {'name': 'Sowing', 'days': '0-5', 'description': 'Seed planting'},
+        {'name': 'Germination', 'days': '5-10', 'description': 'Seedling emergence'},
+        {'name': 'Vegetative', 'days': '10-45', 'description': 'Leaf and stem growth'},
+        {'name': 'Flowering', 'days': '45-75', 'description': 'Yellow flower bloom'},
+        {'name': 'Siliqua Formation', 'days': '75-95', 'description': 'Pod development'},
+        {'name': 'Maturity', 'days': '95-110', 'description': 'Ready for harvest'}
+      ],
+      'tips': [
+        'Early sowing gives better yields',
+        'Control aphids during flowering',
+        'One irrigation at flowering crucial',
+        'Harvest when pods turn yellow-brown',
+        'Excellent oilseed and green manure crop'
+      ]
+    },
+    'groundnut': {
+      'name': 'Groundnut',
+      'hindiName': 'मूंगफली',
+      'season': 'Kharif',
+      'plantingMonths': [6, 7],
+      'harvestMonths': [10, 11],
+      'duration': 110,
+      'waterRequirement': 'Medium',
+      'soilType': ['Sandy Loam', 'Red Loam'],
+      'soilPH': [6.0, 7.0],
+      'temperature': {'min': 20, 'max': 30, 'optimal': 25},
+      'yield': {'min': 15, 'max': 30, 'average': 22},
+      'spacing': {'rows': 30, 'plants': 10},
+      'fertilizer': {'n': 25, 'p': 50, 'k': 75},
+      'diseases': ['Tikka Leaf Spot', 'Stem Rot', 'Rust'],
+      'pests': ['Aphids', 'Thrips', 'White Grub'],
+      'marketPrice': {'min': 5000, 'max': 6500, 'current': 5800},
+      'profitability': 'High',
+      'riskLevel': 'Medium',
+      'irrigationFrequency': 6,
+      'stages': [
+        {'name': 'Sowing', 'days': '0-7', 'description': 'Seed planting'},
+        {'name': 'Germination', 'days': '7-15', 'description': 'Seedling emergence'},
+        {'name': 'Vegetative', 'days': '15-40', 'description': 'Branch development'},
+        {'name': 'Flowering', 'days': '40-55', 'description': 'Flower formation'},
+        {'name': 'Pegging', 'days': '55-75', 'description': 'Underground peg penetration'},
+        {'name': 'Pod Development', 'days': '75-100', 'description': 'Nut formation'},
+        {'name': 'Maturity', 'days': '100-110', 'description': 'Ready for harvest'}
+      ],
+      'tips': [
+        'Treat seeds with Rhizobium and fungicide',
+        'Gypsum application at flowering crucial',
+        'Do not disturb soil during pegging',
+        'Ensure calcium availability for pod filling',
+        'Harvest when leaves turn yellow'
+      ]
+    },
+    'pigeon_pea': {
+      'name': 'Pigeon Pea',
+      'hindiName': 'अरहर/तुअर',
+      'season': 'Kharif',
+      'plantingMonths': [6, 7],
+      'harvestMonths': [12, 1, 2],
+      'duration': 160,
+      'waterRequirement': 'Low',
+      'soilType': ['Loamy', 'Clay Loam', 'Black Cotton'],
+      'soilPH': [5.5, 7.5],
+      'temperature': {'min': 20, 'max': 35, 'optimal': 28},
+      'yield': {'min': 12, 'max': 25, 'average': 18},
+      'spacing': {'rows': 60, 'plants': 20},
+      'fertilizer': {'n': 20, 'p': 50, 'k': 25},
+      'diseases': ['Wilt', 'Sterility Mosaic', 'Phytophthora Blight'],
+      'pests': ['Pod Borer', 'Pod Fly', 'Plume Moth'],
+      'marketPrice': {'min': 6000, 'max': 8000, 'current': 7000},
+      'profitability': 'Very High',
+      'riskLevel': 'Medium',
+      'irrigationFrequency': 3,
+      'stages': [
+        {'name': 'Sowing', 'days': '0-10', 'description': 'Seed planting'},
+        {'name': 'Germination', 'days': '10-20', 'description': 'Seedling emergence'},
+        {'name': 'Vegetative', 'days': '20-80', 'description': 'Branch and leaf development'},
+        {'name': 'Flowering', 'days': '80-120', 'description': 'Flower formation'},
+        {'name': 'Pod Formation', 'days': '120-150', 'description': 'Pod development'},
+        {'name': 'Maturity', 'days': '150-160', 'description': 'Ready for harvest'}
+      ],
+      'tips': [
+        'Ideal for intercropping with cereals',
+        'Drought tolerant, suitable for rainfed areas',
+        'Use wilt-resistant varieties',
+        'Monitor for pod borer after flowering',
+        'Multiple pickings increase total yield'
+      ]
+    },
+    'pearl_millet': {
+      'name': 'Pearl Millet',
+      'hindiName': 'बाजरा',
+      'season': 'Kharif',
+      'plantingMonths': [7, 8],
+      'harvestMonths': [10, 11],
+      'duration': 75,
+      'waterRequirement': 'Low',
+      'soilType': ['Sandy', 'Sandy Loam', 'Loamy'],
+      'soilPH': [6.5, 7.5],
+      'temperature': {'min': 25, 'max': 35, 'optimal': 30},
+      'yield': {'min': 15, 'max': 30, 'average': 22},
+      'spacing': {'rows': 45, 'plants': 10},
+      'fertilizer': {'n': 80, 'p': 40, 'k': 20},
+      'diseases': ['Downy Mildew', 'Ergot', 'Smut'],
+      'pests': ['Shoot Fly', 'Stem Borer', 'Armyworm'],
+      'marketPrice': {'min': 2000, 'max': 2800, 'current': 2400},
+      'profitability': 'Medium',
+      'riskLevel': 'Low',
+      'irrigationFrequency': 2,
+      'stages': [
+        {'name': 'Sowing', 'days': '0-5', 'description': 'Seed planting'},
+        {'name': 'Germination', 'days': '5-10', 'description': 'Seedling emergence'},
+        {'name': 'Tillering', 'days': '10-30', 'description': 'Multiple shoot development'},
+        {'name': 'Panicle Initiation', 'days': '30-45', 'description': 'Flower head formation'},
+        {'name': 'Flowering', 'days': '45-55', 'description': 'Pollination phase'},
+        {'name': 'Grain Filling', 'days': '55-70', 'description': 'Grain development'},
+        {'name': 'Maturity', 'days': '70-75', 'description': 'Ready for harvest'}
+      ],
+      'tips': [
+        'Highly drought tolerant crop',
+        'Ideal for arid and semi-arid regions',
+        'Rich in iron and minerals',
+        'Treat seeds with systemic fungicide',
+        'Good fodder value for livestock'
+      ]
+    },
+    'tomato': {
+      'name': 'Tomato',
+      'hindiName': 'टमाटर',
+      'season': 'All Season',
+      'plantingMonths': [7, 8, 11, 12],
+      'harvestMonths': [10, 11, 2, 3],
+      'duration': 90,
+      'waterRequirement': 'Medium',
+      'soilType': ['Loamy', 'Sandy Loam'],
+      'soilPH': [6.0, 7.0],
+      'temperature': {'min': 15, 'max': 30, 'optimal': 23},
+      'yield': {'min': 200, 'max': 600, 'average': 400},
+      'spacing': {'rows': 60, 'plants': 45},
+      'fertilizer': {'n': 150, 'p': 100, 'k': 100},
+      'diseases': ['Early Blight', 'Late Blight', 'Leaf Curl Virus'],
+      'pests': ['Fruit Borer', 'Whitefly', 'Leaf Miner'],
+      'marketPrice': {'min': 1000, 'max': 3000, 'current': 2000},
+      'profitability': 'Very High',
+      'riskLevel': 'Medium',
+      'irrigationFrequency': 10,
+      'stages': [
+        {'name': 'Nursery', 'days': '0-25', 'description': 'Seedling preparation'},
+        {'name': 'Transplanting', 'days': '25-30', 'description': 'Moving to main field'},
+        {'name': 'Vegetative', 'days': '30-45', 'description': 'Plant growth'},
+        {'name': 'Flowering', 'days': '45-55', 'description': 'Flower formation'},
+        {'name': 'Fruit Setting', 'days': '55-70', 'description': 'Fruit development'},
+        {'name': 'Ripening', 'days': '70-90', 'description': 'Harvest stage'}
+      ],
+      'tips': [
+        'Transplant in evening hours',
+        'Stake tall varieties for support',
+        'Regular pruning improves quality',
+        'Drip irrigation highly beneficial',
+        'Multiple pickings increase returns'
+      ]
+    },
+    'onion': {
+      'name': 'Onion',
+      'hindiName': 'प्याज',
+      'season': 'Rabi',
+      'plantingMonths': [11, 12, 1],
+      'harvestMonths': [3, 4, 5],
+      'duration': 120,
+      'waterRequirement': 'Medium',
+      'soilType': ['Loamy', 'Sandy Loam'],
+      'soilPH': [6.0, 7.0],
+      'temperature': {'min': 13, 'max': 24, 'optimal': 18},
+      'yield': {'min': 150, 'max': 400, 'average': 250},
+      'spacing': {'rows': 15, 'plants': 10},
+      'fertilizer': {'n': 100, 'p': 50, 'k': 100},
+      'diseases': ['Purple Blotch', 'Stemphylium Blight', 'Basal Rot'],
+      'pests': ['Thrips', 'Onion Maggot', 'Cutworm'],
+      'marketPrice': {'min': 1500, 'max': 4000, 'current': 2500},
+      'profitability': 'Very High',
+      'riskLevel': 'High',
+      'irrigationFrequency': 8,
+      'stages': [
+        {'name': 'Nursery', 'days': '0-40', 'description': 'Seedling preparation'},
+        {'name': 'Transplanting', 'days': '40-45', 'description': 'Moving to main field'},
+        {'name': 'Vegetative', 'days': '45-75', 'description': 'Leaf development'},
+        {'name': 'Bulb Initiation', 'days': '75-95', 'description': 'Bulb formation'},
+        {'name': 'Bulb Development', 'days': '95-115', 'description': 'Bulb enlargement'},
+        {'name': 'Maturity', 'days': '115-120', 'description': 'Ready for harvest'}
+      ],
+      'tips': [
+        'Shallow rooted, needs frequent irrigation',
+        'Stop irrigation 10-15 days before harvest',
+        'Cure bulbs in shade for better storage',
+        'Control thrips during bulb formation',
+        'Price fluctuations need market awareness'
       ]
     }
   };
@@ -684,5 +940,44 @@ class CropPlanningService {
       'schedule': schedule,
       'harvestDate': plantingDate.add(Duration(days: cropData['duration'] as int)),
     };
+  }
+
+  /// Get enriched recommendations with regional CSV data
+  Future<Map<String, dynamic>> getEnrichedRecommendations({
+    required double latitude,
+    required double longitude,
+    required double fieldSize,
+    String? state,
+    String? district,
+  }) async {
+    try {
+      // Get base recommendations
+      final baseRecommendations = await getCropRecommendations(
+        latitude: latitude,
+        longitude: longitude,
+        fieldSize: fieldSize,
+      );
+
+      // Enrich with CSV data if state is provided
+      if (state != null) {
+        final soilData = await _csvDataService.getSoilDataByRegion(state, district);
+        final cropCalendar = await _csvDataService.getCropCalendarForRegion(state, null);
+        final inputCosts = await _csvDataService.getInputCostsByRegion(state);
+
+        baseRecommendations['regionalData'] = {
+          'soilData': soilData,
+          'cropCalendar': cropCalendar,
+          'inputCosts': inputCosts,
+        };
+      }
+
+      return baseRecommendations;
+    } catch (e) {
+      return await getCropRecommendations(
+        latitude: latitude,
+        longitude: longitude,
+        fieldSize: fieldSize,
+      );
+    }
   }
 }
